@@ -1,0 +1,16 @@
+# 本地工具与临时产物
+.pkg/
+_inspect.py
+_export.py
+_qa.py
+_peek.py
+_*.log
+_*.json
+_*.html
+_questions.json
+_docx.json
+.whale-craft/
+.edge*/
+shots/
+/*.xlsx
+/*.docx

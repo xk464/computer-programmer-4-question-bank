@@ -1,0 +1,17 @@
+{
+  "name": "计算机程序设计员（四级）题库",
+  "short_name": "四级题库",
+  "description": "计算机程序设计员（四级）手机题库：只有选择题，点选即判，离线可用。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f6fc",
+  "theme_color": "#4a63e7",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>计算机程序设计员（四级）题库 · 电脑版 + 手机版</title>
+<meta name="description" content="计算机程序设计员（四级）题库：电脑版本地判分、模拟考试、错题本；手机版只有选择题，点开即刷，完全离线。">
+<meta name="theme-color" content="#4a63e7">
+<link rel="icon" type="image/png" href="./assets/favicon.png">
+<style>
+:root{
+  --bg:#f6f8fd; --surface:#ffffff; --surface-2:#f4f7fd; --border:#e4e9f3;
+  --text:#0e1830; --muted:#5f6f88; --muted-2:#8b9ab0;
+  --primary:#4a63e7; --primary-2:#7c5cff; --primary-weak:#eef1ff;
+  --success:#0f9d58; --warn:#b8770c;
+  --shadow:0 24px 60px -30px rgba(20,35,70,.35);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:"Cascadia Code",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a1120; --surface:#111a2b; --surface-2:#0e1727; --border:#22304a;
+    --text:#e8eef9; --muted:#93a4bd; --muted-2:#7285a0;
+    --primary:#7d92ff; --primary-2:#a58bff; --primary-weak:#1a2a52;
+    --success:#3ecf8e; --warn:#f0b45a;
+    --shadow:0 24px 60px -30px rgba(0,0,0,.8);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--font);color:var(--text);line-height:1.65;
+  background:
+    radial-gradient(900px 480px at 12% -8%,rgba(124,92,255,.10),transparent 60%),
+    radial-gradient(800px 420px at 92% 2%,rgba(74,99,231,.10),transparent 58%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit}
+::selection{background:var(--primary);color:#fff}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(246,248,253,.75);border-bottom:1px solid transparent;transition:.2s}
+@media (prefers-color-scheme: dark){nav{background:rgba(10,17,32,.78)}}
+nav.scrolled{border-bottom-color:var(--border)}
+.nav-in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;color:var(--text)}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(145deg,#5f7bff,#3f55d6);display:grid;place-items:center;color:#fff;font-size:15px;box-shadow:0 6px 16px -8px rgba(74,99,231,.9)}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:4px}
+.nav-links a{font-size:13px;color:var(--muted);padding:7px 11px;border-radius:8px;font-weight:600}
+.nav-links a:hover{color:var(--primary);background:var(--primary-weak)}
+.nav-links a.gh{border:1px solid var(--border);background:var(--surface)}
+
+/* hero */
+.hero{padding:64px 0 26px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(120,140,180,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,180,.09) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 20%,transparent 75%);pointer-events:none}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.4px;color:var(--primary);background:var(--primary-weak);border:1px solid rgba(74,99,231,.22);padding:5px 12px;border-radius:99px;position:relative}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px rgba(15,157,88,.16)}
+h1{font-size:clamp(34px,5.2vw,58px);line-height:1.12;letter-spacing:-1.2px;margin:20px 0 14px;font-weight:900;position:relative}
+h1 .grad{background:linear-gradient(100deg,var(--primary),var(--primary-2) 55%,#e0568a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(14px,1.7vw,16.5px);color:var(--muted);max-width:640px;margin:0 auto;position:relative}
+.cta-row{display:flex;gap:12px;justify-content:center;margin:28px 0 10px;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:13px;font-weight:700;font-size:14.5px;border:1px solid transparent;transition:.18s;cursor:pointer}
+.btn.primary{background:linear-gradient(145deg,#5871f2,#4056d6);color:#fff;box-shadow:0 16px 34px -16px rgba(74,99,231,.9)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 22px 38px -16px rgba(74,99,231,.95)}
+.btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border);box-shadow:0 10px 26px -20px rgba(20,35,70,.5)}
+.btn.secondary:hover{transform:translateY(-2px);border-color:rgba(74,99,231,.4)}
+.cta-note{font-size:12px;color:var(--muted-2);position:relative}
+.stats{display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin:40px auto 0;max-width:780px;border:1px solid var(--border);background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.stat{flex:1 1 140px;padding:18px 14px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-size:clamp(24px,3.4vw,32px);font-weight:900;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.stat:nth-child(1) b{color:var(--text)}
+.stat:nth-child(2) b{color:var(--primary)}
+.stat:nth-child(3) b{color:#b06a00}
+@media (prefers-color-scheme: dark){.stat:nth-child(3) b{color:#f0b45a}}
+
+/* section head */
+section{padding:52px 0}
+.sec-head{text-align:center;margin-bottom:30px}
+.sec-head .kicker{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--primary);text-transform:uppercase}
+.sec-head h2{font-size:clamp(24px,3.4vw,34px);margin:8px 0 8px;letter-spacing:-.6px}
+.sec-head p{margin:0 auto;color:var(--muted);font-size:14px;max-width:560px}
+
+/* two versions */
+.versions{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.version{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.version:hover{transform:translateY(-4px)}
+.version .tag{position:absolute;top:16px;right:16px;font-size:10.5px;font-weight:800;letter-spacing:.4px;padding:3px 9px;border-radius:99px;background:var(--primary-weak);color:var(--primary);border:1px solid rgba(74,99,231,.2)}
+.version h3{font-size:19px;margin:0 0 4px}
+.version .desc{font-size:13px;color:var(--muted);margin:0 0 14px;min-height:40px}
+.version .go{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--primary)}
+.version .go::after{content:"→";transition:.2s}
+.version:hover .go::after{transform:translateX(3px)}
+.mock{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;height:230px;overflow:hidden;position:relative}
+.mock::after{content:"";position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(transparent,var(--surface-2));pointer-events:none}
+
+/* pc mock */
+.mock-pc{background:#eef2fa;border-radius:10px;height:100%;border:1px solid #dde4f0;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 20px -14px rgba(20,35,70,.4)}
+@media (prefers-color-scheme: dark){.mock-pc{background:#0d1626;border-color:#1f2c44}}
+.mock-bar{height:22px;background:#fff;border-bottom:1px solid #e4e9f3;display:flex;align-items:center;gap:4px;padding:0 8px;flex:none}
+@media (prefers-color-scheme: dark){.mock-bar{background:#152136;border-color:#22304a}}
+.mock-bar i{width:6px;height:6px;border-radius:50%;background:#ff5f57}.mock-bar i:nth-child(2){background:#febc2e}.mock-bar i:nth-child(3){background:#28c840}
+.mock-body{flex:1;display:grid;grid-template-columns:1fr 66px;gap:8px;padding:9px;min-height:0}
+.mock-q{background:#fff;border-radius:8px;padding:9px;border:1px solid #e4e9f3;display:flex;flex-direction:column;gap:5px}
+@media (prefers-color-scheme: dark){.mock-q{background:#111a2b;border-color:#22304a}.mock-side{background:#111a2b!important;border-color:#22304a!important}}
+.mock-pill{display:inline-block;font-size:5.5px;font-weight:800;color:#4a63e7;background:#edf1ff;border-radius:3px;padding:1px 4px;width:fit-content}
+.mock-line{height:5px;border-radius:3px;background:#dbe3f0}
+.mock-line.w80{width:80%}.mock-line.w60{width:60%}.mock-line.dark{background:#aebbd0;height:6px}
+.mock-opt{border:1px solid #e2e8f3;border-radius:5px;padding:4px 6px;display:flex;align-items:center;gap:4px;background:#fbfcff}
+.mock-opt.correct{border-color:#9ed7b5;background:#ecf9f1}
+.mock-key{width:8px;height:8px;border-radius:2px;background:#e6ecf7;flex:none}
+.mock-opt.correct .mock-key{background:#0f9d58}
+.mock-opt .mock-line{flex:1}
+.mock-side{background:#fff;border-radius:8px;border:1px solid #e4e9f3;padding:6px;display:flex;flex-direction:column;gap:4px;align-items:center}
+.mock-ring{width:34px;height:34px;border-radius:50%;border:5px solid #e6ecf7;border-top-color:#4a63e7;border-right-color:#4a63e7;transform:rotate(45deg);margin:2px 0 2px}
+.mock-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:100%}
+.mock-cell{aspect-ratio:1;background:#eef2fa;border-radius:2px}
+.mock-cell.g{background:#b8e6cb}.mock-cell.r{background:#f5c2c2}
+
+/* phone mock */
+.mock-phone-wrap{display:flex;justify-content:center;align-items:center;height:100%}
+.phone{width:150px;height:100%;max-height:214px;background:#0f1a2e;border-radius:18px;padding:5px;box-shadow:0 14px 30px -16px rgba(20,35,70,.6);position:relative}
+.phone::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:4px;background:#2a3a55;z-index:2}
+.phone-screen{background:#fff;border-radius:14px;height:100%;overflow:hidden;display:flex;flex-direction:column}
+@media (prefers-color-scheme: dark){.phone-screen{background:#111a2b}}
+.ph-head{padding:11px 8px 5px;display:flex;align-items:center;gap:4px;border-bottom:1px solid #eef2f9}
+.ph-logo{width:10px;height:10px;border-radius:3px;background:#4a63e7;flex:none}
+.ph-title{height:4px;width:42px;background:#c7d2e4;border-radius:2px}
+.ph-progress{height:2px;background:#eef2f9;margin:0 8px}
+.ph-progress i{display:block;height:100%;width:36%;background:#4a63e7}
+.ph-body{padding:8px;display:flex;flex-direction:column;gap:5px;flex:1;min-height:0}
+.ph-badge{font-size:5px;font-weight:800;color:#4a63e7;background:#edf1ff;padding:1px 4px;border-radius:2px;width:fit-content}
+.ph-q{display:flex;flex-direction:column;gap:3px;margin-bottom:2px}
+.ph-opt{border:1px solid #e7ecf6;border-radius:4px;padding:4px 5px;display:flex;gap:4px;align-items:center;background:#fbfcff}
+.ph-opt.correct{border-color:#9ed7b5;background:#ecf9f1}
+.ph-opt .mock-key{width:6px;height:6px}
+.ph-opt .mock-line{height:4px}
+.ph-foot{margin-top:auto;border-top:1px solid #eef2f9;padding:4px 6px;display:flex;gap:3px;align-items:center}
+.ph-foot span{flex:1;height:12px;border-radius:3px;background:#eef2fa}
+.ph-foot span.pri{background:#4a63e7;flex:1.6}
+
+/* features */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;transition:.2s}
+.feat:hover{border-color:rgba(74,99,231,.3);transform:translateY(-2px)}
+.feat .ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--primary-weak);margin-bottom:10px}
+.feat h3{font-size:14.5px;margin:0 0 4px}
+.feat p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.65}
+
+/* download / qr */
+.dl{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;background:linear-gradient(160deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow);align-items:center}
+.dl h3{margin:0 0 6px;font-size:20px}
+.dl p{margin:0 0 16px;font-size:13px;color:var(--muted)}
+.dl-links{display:flex;gap:9px;flex-wrap:wrap}
+.dl-links a{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 13px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.dl-links a:hover{border-color:var(--primary);color:var(--primary)}
+.qr{text-align:center}
+.qr img{width:132px;height:132px;border-radius:14px;border:1px solid var(--border);background:#fff;padding:6px}
+.qr p{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.5}
+.qr code{font-family:var(--mono);font-size:10.5px;color:var(--muted-2);word-break:break-all}
+
+/* note */
+.note{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--warn);border-radius:12px;padding:14px 18px;font-size:12.5px;color:var(--muted);line-height:1.8}
+.note b{color:var(--text)}
+
+footer{border-top:1px solid var(--border);margin-top:36px;padding:26px 0 40px;font-size:12.5px;color:var(--muted)}
+.foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+.foot-in a{color:var(--muted);font-weight:600}
+.foot-in a:hover{color:var(--primary)}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.on{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (max-width:880px){
+  .versions{grid-template-columns:1fr}
+  .features{grid-template-columns:repeat(2,1fr)}
+  .dl{grid-template-columns:1fr}
+  .qr{order:-1}
+  .qc{display:none}
+}
+@media (max-width:560px){
+  .hero{padding:44px 0 18px}
+  .stats{grid-template-columns:1fr 1fr;display:grid}
+  .stat{border-right:0;border-bottom:1px solid var(--border)}
+  .stat:nth-child(odd){border-right:1px solid var(--border)}
+  .features{grid-template-columns:1fr}
+  .nav-links a:not(.gh){display:none}
+  .cta-row .btn{width:100%}
+  section{padding:38px 0}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-in">
+    <div class="brand"><div class="logo">题</div>四级题库</div>
+    <div class="nav-links">
+      <a href="#versions">两个版本</a>
+      <a href="#features">功能</a>
+      <a href="#download">离线下载</a>
+      <a class="gh" href="https://github.com/xk464/computer-programmer-4-question-bank" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>计算机程序设计员（四级）· 备考题库</span>
+    <h1>398 道题，<br><span class="grad">电脑手机都能刷</span></h1>
+    <p class="lede">电脑版完整判分、模拟考试与错题本；手机版只留选择题，点开即刷。免注册、无广告、完全离线，答题记录只存在你自己的设备上。</p>
+    <div class="cta-row">
+      <a class="btn primary" href="./pc/">电脑版 · 开始练习</a>
+      <a class="btn secondary" href="./mobile/">手机版 · 打开即刷</a>
+    </div>
+    <p class="cta-note">开源项目 · 数据来自《计算机程序设计员 4 级题库》与《实操复习题》</p>
+
+    <div class="stats">
+      <div class="stat"><b data-count="total">398</b><span>道题（去重）</span></div>
+      <div class="stat"><b data-count="single">306</b><span>单选题</span></div>
+      <div class="stat"><b data-count="judge">92</b><span>判断题</span></div>
+      <div class="stat"><b data-count="practical">5</b><span>实操考核要点</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="versions">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Two versions</div>
+      <h2>一套题库，两种用法</h2>
+      <p>电脑上系统刷题、模拟考试；手机上碎片时间随时点几道。</p>
+    </div>
+
+    <div class="versions">
+      <a class="version reveal" href="./pc/">
+        <span class="tag">功能完整</span>
+        <h3>电脑版</h3>
+        <p class="desc">本地判分、模拟考试、错题本、收藏与搜索，含 5 个实操考核要点；深色模式，键盘快捷作答。</p>
+        <div class="mock">
+          <div class="mock-pc">
+            <div class="mock-bar"><i></i><i></i><i></i></div>
+            <div class="mock-body">
+              <div class="mock-q">
+                <span class="mock-pill">单选题</span>
+                <div class="mock-line dark w80"></div>
+                <div class="mock-line dark w60"></div>
+                <div class="mock-opt"><span class="mock-key"></span><span class="mock-line w80"></span></div>
+                <div class="mock-opt correct"><span class="mock-key"></span><span class="mock-line w60"></span></div>
+                <div class="mock-opt"><span class="mock-key"></span><span class="mock-line w80"></span></div>
+                <div class="mock-opt"><span class="mock-key"></span><span class="mock-line w60"></span></div>
+              </div>
+              <div class="mock-side">
+                <div class="mock-ring"></div>
+                <div class="mock-grid">
+                  <span class="mock-cell g"></span><span class="mock-cell"></span><span class="mock-cell r"></span><span class="mock-cell g"></span>
+                  <span class="mock-cell"></span><span class="mock-cell g"></span><span class="mock-cell"></span><span class="mock-cell"></span>
+                  <span class="mock-cell r"></span><span class="mock-cell"></span><span class="mock-cell g"></span><span class="mock-cell"></span>
+                  <span class="mock-cell"></span><span class="mock-cell"></span><span class="mock-cell g"></span><span class="mock-cell"></span>
+                  <span class="mock-cell"></span><span class="mock-cell r"></span><span class="mock-cell"></span><span class="mock-cell"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="go">进入电脑版</span>
+      </a>
+
+      <a class="version reveal" href="./mobile/">
+        <span class="tag">轻量</span>
+        <h3>手机版</h3>
+        <p class="desc">只有选择题，去掉一切多余功能；大按钮、点选即判、滑动切题，可“添加到主屏幕”像 App 一样离线使用。</p>
+        <div class="mock">
+          <div class="mock-phone-wrap">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="ph-head"><span class="ph-logo"></span><span class="ph-title"></span></div>
+                <div class="ph-progress"><i></i></div>
+                <div class="ph-body">
+                  <span class="ph-badge">判断题</span>
+                  <div class="ph-q">
+                    <div class="mock-line dark w80"></div>
+                    <div class="mock-line dark w60"></div>
+                  </div>
+                  <div class="ph-opt"><span class="mock-key"></span><span class="mock-line w80"></span></div>
+                  <div class="ph-opt correct"><span class="mock-key"></span><span class="mock-line w60"></span></div>
+                  <div class="ph-opt"><span class="mock-key"></span><span class="mock-line w80"></span></div>
+                  <div class="ph-foot"><span></span><span class="pri"></span><span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="go">进入手机版</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Features</div>
+      <h2>刷题需要的，刚好都有</h2>
+      <p>没有登录、没有广告，也没有“开通会员”。</p>
+    </div>
+    <div class="features">
+      <div class="feat reveal"><div class="ico">✓</div><h3>本地即时判分</h3><p>点选项立刻知道对错，附答案与解析，答错自动进入错题本。</p></div>
+      <div class="feat reveal"><div class="ico">⏱</div><h3>模拟考试</h3><p>20 / 50 / 100 题或全量随机组卷，倒计时交卷，自动评分并保留成绩。</p></div>
+      <div class="feat reveal"><div class="ico">📕</div><h3>错题本</h3><p>按错误次数归集，答对自动移除，支持一键导出 TXT 反复巩固。</p></div>
+      <div class="feat reveal"><div class="ico">🔎</div><h3>搜索与收藏</h3><p>按题干、选项、解析全文搜索；重点题星标收藏，随时回看。</p></div>
+      <div class="feat reveal"><div class="ico">📘</div><h3>实操资料</h3><p>安装环境、流程图、C 语言填空与递归题、详细设计说明，含参考答案。</p></div>
+      <div class="feat reveal"><div class="ico">📶</div><h3>完全离线</h3><p>无需联网，数据只写在本机浏览器；手机版可安装到桌面离线打开。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="dl reveal">
+      <div>
+        <h3>下载单文件，离线也能用</h3>
+        <p>把网页保存成一个 HTML 文件：拷到 U 盘、发到微信，双击就能刷题，不需要安装任何软件。</p>
+        <div class="dl-links">
+          <a href="./dist/题库-电脑版-离线.html" download>⬇ 电脑版离线单文件</a>
+          <a href="./dist/题库-手机版-离线.html" download>⬇ 手机版离线单文件</a>
+          <a href="./pc/">在线使用电脑版</a>
+        </div>
+      </div>
+      <div class="qr">
+        <img src="./assets/qr-mobile.png" alt="手机版二维码" width="132" height="132">
+        <p>手机扫码打开手机版<br><code>xk464.github.io/computer-programmer-4-question-bank/mobile/</code></p>
+      </div>
+    </div>
+
+    <div style="margin-top:16px" class="note reveal">
+      <b>题库说明</b>：原始 Excel 共 400 题（单选题 308、判断题 92）。其中第 168、299 题引用“如图所示的伪代码 / 程序框图”，但源文件没有配图、也没有答案，无法判分，因此未收录；当前可用 <b>398 题</b>。另有 8 道题在原表中标注“答案存疑 / 选项疑有笔误”，软件中已用 <b>⚠ 答案存疑</b> 标记，请以教材和考官口径为准。实操资料依据《实操复习题.docx》整理。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© 2026 四级题库 · 仅供个人学习复习使用</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="https://github.com/xk464/computer-programmer-4-question-bank" target="_blank" rel="noopener">GitHub 仓库 ↗</a>
+      <a href="./pc/">电脑版</a>
+      <a href="./mobile/">手机版</a>
+    </div>
+  </div>
+</footer>
+
+<script src="./assets/bank.js"></script>
+<script>
+(function () {
+  const bank = window.QBANK;
+  if (bank && bank.meta) {
+    const map = {
+      total: bank.meta.total,
+      single: bank.meta.single,
+      judge: bank.meta.judge,
+      practical: bank.practical ? bank.practical.tasks.length : 5
+    };
+    document.querySelectorAll("[data-count]").forEach(el => {
+      const v = map[el.dataset.count];
+      if (v != null) el.textContent = v;
+    });
+  }
+  const nav = document.getElementById("nav");
+  addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("on"); io.unobserve(e.target); } });
+    }, { threshold: .12 });
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("on"));
+  }
+})();
+</script>
+</body>
+</html>

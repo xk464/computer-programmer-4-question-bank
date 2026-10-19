@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a63e7">
+<meta name="description" content="计算机程序设计员（四级）手机题库：只有选择题，点选即判，免安装、离线可用。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="四级题库">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>四级题库 · 手机版</title>
+<script>
+try {
+  var st = JSON.parse(localStorage.getItem("mc_tiku_mobile_v1") || "{}");
+  var th = st.settings && st.settings.theme;
+  if (!th || !st.settings.themeTouched) {
+    th = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  document.documentElement.dataset.theme = th;
+} catch (e) {}
+</script>
+<style>
+:root{
+  --bg:#f3f6fc; --surface:#ffffff; --surface-2:#f7f9fd; --surface-3:#edf1f8;
+  --border:#e3e8f2; --border-strong:#cfd8e8; --text:#0f1a2e; --muted:#66758c; --muted-2:#8b9ab0;
+  --primary:#4a63e7; --primary-weak:#eef1ff; --primary-border:#ccd6ff;
+  --success:#0f9d58; --success-weak:#e9f8f0; --success-border:#b9e7cd;
+  --danger:#dc3b3b; --danger-weak:#fdeeee; --danger-border:#f5c4c4;
+  --warn:#b8770c; --warn-weak:#fff7e8; --warn-border:#f1daad;
+  --shadow:0 10px 28px -16px rgba(16,26,46,.28);
+  --radius:20px;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+  --mono:"Cascadia Code",Consolas,monospace;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+[data-theme="dark"]{
+  --bg:#0a1120; --surface:#111a2b; --surface-2:#0e1727; --surface-3:#182338;
+  --border:#22304a; --border-strong:#31425f; --text:#e8eef9; --muted:#93a4bd; --muted-2:#7285a0;
+  --primary:#7d92ff; --primary-weak:#1a2a52; --primary-border:#2c4382;
+  --success:#3ecf8e; --success-weak:#0f2b23; --success-border:#1e5544;
+  --danger:#ff7a7a; --danger-weak:#331a1c; --danger-border:#633034;
+  --warn:#f0b45a; --warn-weak:#2b2213; --warn-border:#5a4620;
+  --shadow:0 14px 34px -18px rgba(0,0,0,.75);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;font-family:var(--font);color:var(--text);
+  background:
+    radial-gradient(600px 300px at 100% -5%,var(--primary-weak),transparent 65%),
+    var(--bg);
+  font-size:15px;line-height:1.65;overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+a{color:var(--primary);text-decoration:none}
+::selection{background:var(--primary);color:#fff}
+
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:620px;margin:0 auto;position:relative}
+header{padding:calc(var(--safe-t) + 10px) 18px 8px;display:flex;align-items:center;gap:10px;flex:none}
+.logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#5f7bff,#3f55d6);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;box-shadow:0 6px 16px -8px rgba(74,99,231,.9);flex:none}
+.htext{min-width:0}
+.htext h1{font-size:15px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htext p{margin:0;font-size:11.5px;color:var(--muted)}
+.hactions{margin-left:auto;display:flex;align-items:center;gap:6px}
+.hstat{text-align:right;font-size:11px;color:var(--muted);line-height:1.3;margin-right:2px;white-space:nowrap}
+.hstat b{display:block;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.hbtn{width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;font-size:17px;color:var(--muted);box-shadow:var(--shadow)}
+.hbtn:active{transform:scale(.95)}
+.hbtn.star{font-size:19px}
+.hbtn.star.on{color:#f0a020}
+
+.pbar{height:4px;background:var(--surface-3);margin:0 18px;border-radius:4px;overflow:hidden;flex:none}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),#93a6ff);border-radius:4px;transition:width .3s}
+
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 10px;position:relative}
+main::-webkit-scrollbar{width:0}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px 16px;animation:in .18s ease}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.qmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.2px}
+.badge.single{background:var(--primary-weak);color:var(--primary);border:1px solid var(--primary-border)}
+.badge.judge{background:var(--warn-weak);color:var(--warn);border:1px solid var(--warn-border)}
+.badge.flag{background:var(--warn-weak);color:var(--warn);border:1px solid var(--warn-border);font-weight:600;font-size:10.5px}
+.badge.ok{background:var(--success-weak);color:var(--success);border:1px solid var(--success-border)}
+.badge.bad{background:var(--danger-weak);color:var(--danger);border:1px solid var(--danger-border)}
+.qno{margin-left:auto;font-size:11.5px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.qtext{font-size:17.5px;line-height:1.72;font-weight:600;margin:2px 0 14px;white-space:pre-wrap;word-break:break-word}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{
+  display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+  background:var(--surface-2);border:1.5px solid var(--border);border-radius:13px;
+  padding:13px 13px;font-size:15px;line-height:1.6;min-height:52px;
+  transition:transform .08s,border-color .15s,background .15s;
+}
+.option:active:not([disabled]){transform:scale(.985)}
+.option .key{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12.5px;font-weight:800;background:var(--surface);border:1px solid var(--border);color:var(--muted);margin-top:1px}
+.option .txt{flex:1;white-space:pre-wrap;word-break:break-word}
+.option .mark{margin-left:auto;align-self:center;font-size:11px;font-weight:800;white-space:nowrap}
+.option.correct{border-color:var(--success-border);background:var(--success-weak)}
+.option.correct .key{background:var(--success);border-color:var(--success);color:#fff}
+.option.correct .mark{color:var(--success)}
+.option.wrong{border-color:var(--danger-border);background:var(--danger-weak)}
+.option.wrong .key{background:var(--danger);border-color:var(--danger);color:#fff}
+.option.wrong .mark{color:var(--danger)}
+.option.dim{opacity:.6}
+.option[disabled]{cursor:default}
+
+.explain{margin-top:13px;border:1px solid var(--border);border-left:3px solid var(--primary);background:var(--surface-2);border-radius:11px;padding:11px 13px;animation:in .2s ease}
+.explain h4{margin:0 0 4px;font-size:11.5px;letter-spacing:.4px;color:var(--primary);display:flex;align-items:center;gap:6px}
+.explain p{margin:0;font-size:13.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.explain .warn{color:var(--warn);font-size:11.5px;margin-top:6px;display:flex;gap:5px}
+.under{margin-top:12px;display:flex;gap:8px}
+.linkbtn{font-size:12.5px;color:var(--muted);border:1px dashed var(--border-strong);border-radius:8px;padding:5px 10px}
+.linkbtn:active{background:var(--surface-3)}
+.nextbig{flex:1;background:var(--primary);color:#fff;border-radius:11px;padding:11px;font-weight:700;font-size:14px;box-shadow:0 8px 18px -10px rgba(74,99,231,.9)}
+.nextbig:active{transform:scale(.99)}
+.nextbig[disabled]{opacity:.45;box-shadow:none}
+
+.empty{text-align:center;padding:52px 20px;color:var(--muted)}
+.empty .big{font-size:38px;display:block;margin-bottom:8px;opacity:.6}
+.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:4px}
+
+footer{
+  flex:none;display:flex;align-items:center;gap:8px;
+  padding:8px 14px calc(var(--safe-b) + 10px);
+  background:var(--surface);border-top:1px solid var(--border);
+}
+.fbtn{
+  height:44px;min-width:52px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:600;color:var(--text);
+}
+.fbtn:active:not([disabled]){transform:scale(.97)}
+.fbtn[disabled]{opacity:.4}
+.fbtn.sheetbtn{flex:1;font-size:13px;color:var(--muted)}
+.fbtn.sheetbtn b{color:var(--text);font-variant-numeric:tabular-nums}
+.fbtn.star{width:46px;min-width:46px;font-size:19px;color:var(--muted)}
+.fbtn.star.on{color:#f0a020;border-color:var(--warn-border);background:var(--warn-weak)}
+
+/* sheet */
+.backdrop{position:fixed;inset:0;background:rgba(8,14,26,.48);backdrop-filter:blur(3px);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.backdrop.show{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:41;max-width:620px;margin:0 auto;
+  background:var(--surface);border-radius:22px 22px 0 0;
+  padding:8px 18px calc(var(--safe-b) + 18px);
+  transform:translateY(105%);transition:transform .26s cubic-bezier(.3,.8,.4,1);
+  max-height:82vh;display:flex;flex-direction:column;box-shadow:0 -20px 50px -20px rgba(0,0,0,.4);
+}
+.sheet.show{transform:none}
+.handle{width:38px;height:4px;border-radius:4px;background:var(--border-strong);margin:2px auto 12px;flex:none}
+.sheet h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;justify-content:space-between}
+.sheet h3 span{font-size:11.5px;color:var(--muted);font-weight:500}
+.sheet-scroll{overflow-y:auto;min-height:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.stats div{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:7px;text-align:center;font-size:10.5px;color:var(--muted)}
+.stats b{display:block;font-size:16px;color:var(--text);margin-top:1px;font-variant-numeric:tabular-nums}
+.filters{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.seg{display:flex;gap:3px;background:var(--surface-3);padding:3px;border-radius:9px}
+.seg button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
+.seg button.active{background:var(--surface);color:var(--primary);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:13px;color:var(--text);border-bottom:1px solid var(--border)}
+.switchrow small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+.switch{width:40px;height:23px;border-radius:23px;background:var(--border-strong);position:relative;transition:.2s;flex:none}
+.switch::after{content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch.on{background:var(--primary)}
+.switch.on::after{transform:translateX(17px)}
+.qgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:30vh;overflow-y:auto;padding:2px}
+.qgrid button{aspect-ratio:1;border:1px solid var(--border);background:var(--surface-2);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--muted);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.qgrid button.ok{background:var(--success-weak);border-color:var(--success-border);color:var(--success)}
+.qgrid button.bad{background:var(--danger-weak);border-color:var(--danger-border);color:var(--danger)}
+.qgrid button.cur{outline:2px solid var(--primary);outline-offset:1px;color:var(--primary);background:var(--primary-weak)}
+.sheet-actions{display:flex;gap:8px;margin-top:12px;flex:none}
+.sheet-actions button{flex:1;padding:10px;border-radius:10px;font-size:12.5px;font-weight:600;border:1px solid var(--border);background:var(--surface-2);color:var(--muted)}
+.sheet-actions button.danger{color:var(--danger);border-color:var(--danger-border);background:var(--danger-weak)}
+.sheet-actions button.primary{color:#fff;background:var(--primary);border-color:var(--primary)}
+.about{font-size:11.5px;color:var(--muted);text-align:center;margin:10px 0 0;line-height:1.7}
+.about a{color:var(--primary)}
+.toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 78px);transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--surface);padding:8px 15px;border-radius:10px;font-size:12.5px;opacity:0;transition:.22s;z-index:60;pointer-events:none;white-space:nowrap;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (min-width:700px){
+  .qgrid{grid-template-columns:repeat(12,1fr)}
+  main{padding:18px 18px 12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">题</div>
+    <div class="htext">
+      <h1>四级题库 · 手机版</h1>
+      <p>只有选择题 · 点选即判 · 离线可用</p>
+    </div>
+    <div class="hactions">
+      <div class="hstat">已答<b><span id="answeredCount">0</span> / <span id="totalCount">398</span></b></div>
+      <button class="hbtn" id="sheetBtn" aria-label="打开答题卡与设置">☰</button>
+    </div>
+  </header>
+  <div class="pbar"><i id="progressBar"></i></div>
+
+  <main id="scroller"><div id="card"></div></main>
+
+  <footer>
+    <button class="fbtn" id="prevBtn" aria-label="上一题">‹</button>
+    <button class="fbtn sheetbtn" id="gridBtn">答题卡 <b id="posText">1 / 398</b></button>
+    <button class="fbtn" id="nextBtn" aria-label="下一题">›</button>
+    <button class="fbtn star" id="starBtn" aria-label="收藏">☆</button>
+  </footer>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="答题卡与设置">
+  <div class="handle"></div>
+  <h3>答题卡 <span id="sheetSummary">0 / 0</span></h3>
+  <div class="sheet-scroll">
+    <div class="stats">
+      <div>已答<b id="stAnswered">0</b></div>
+      <div>正确率<b id="stAcc">—</b></div>
+      <div>错题<b id="stWrong">0</b></div>
+    </div>
+    <div class="filters">
+      <div class="seg" id="typeSeg">
+        <button data-filter="all" class="active">全部</button>
+        <button data-filter="single">单选</button>
+        <button data-filter="judge">判断</button>
+      </div>
+      <span style="font-size:11px;color:var(--muted)">共 <b id="filterCount">398</b> 题</span>
+    </div>
+    <div class="switchrow">
+      <div>随机顺序<small>打乱题目，从头开始</small></div>
+      <div class="switch" id="shuffleSwitch"></div>
+    </div>
+    <div class="switchrow">
+      <div>深色模式<small>夜间护眼</small></div>
+      <div class="switch" id="themeSwitch"></div>
+    </div>
+    <div style="margin-top:12px" class="qgrid" id="qgrid"></div>
+    <div class="sheet-actions">
+      <button class="danger" id="resetBtn">清空记录</button>
+      <button class="primary" id="closeSheet">完成</button>
+    </div>
+    <p class="about">数据仅保存在本机浏览器 · <a href="../pc/">电脑版</a> · <a href="../">首页</a></p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="../assets/bank.js"></script>
+<script>
+(function () {
+  "use strict";
+  const BANK = window.QBANK;
+  if (!BANK || !BANK.questions) {
+    document.getElementById("scroller").innerHTML = '<div class="empty"><b>题库加载失败</b>请重新打开页面或检查 assets/bank.js</div>';
+    return;
+  }
+  const ALL = BANK.questions;
+  const BY_ID = new Map(ALL.map(q => [q.id, q]));
+  const LETTERS = ["A", "B", "C", "D", "E", "F"];
+  const JUDGE_KEYS = ["Y", "N"];
+  const TYPE_NAME = { single: "单选题", judge: "判断题" };
+  const KEY = "mc_tiku_mobile_v1";
+
+  const DEFAULT = { answers: {}, wrong: {}, fav: {}, settings: { filter: "all", shuffle: false, theme: "light" } };
+  let S;
+  try {
+    const raw = localStorage.getItem(KEY);
+    S = raw ? Object.assign(JSON.parse(JSON.stringify(DEFAULT)), JSON.parse(raw)) : JSON.parse(JSON.stringify(DEFAULT));
+    S.settings = Object.assign({}, DEFAULT.settings, S.settings || {});
+  } catch (e) { S = JSON.parse(JSON.stringify(DEFAULT)); }
+  if (!S.settings.themeTouched) {
+    S.settings.theme = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+  const $ = sel => document.querySelector(sel);
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const keyOf = (q, i) => q.type === "judge" ? JUDGE_KEYS[i] : LETTERS[i];
+
+  let ids = [], idx = 0;
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $("#toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1700);
+  }
+
+  function buildList(keepIdx) {
+    const oldId = ids[idx];
+    let list = ALL.filter(q => S.settings.filter === "all" || q.type === S.settings.filter);
+    if (S.settings.shuffle) {
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+    }
+    ids = list.map(q => q.id);
+    if (keepIdx && oldId != null) {
+      const p = ids.indexOf(oldId);
+      idx = p >= 0 ? p : Math.min(idx, Math.max(0, ids.length - 1));
+    } else {
+      idx = Math.min(idx, Math.max(0, ids.length - 1));
+    }
+  }
+
+  function current() { return BY_ID.get(ids[idx]); }
+
+  function answerOf(q) { return S.answers[q.id]; }
+
+  function render(animate) {
+    const q = current();
+    const card = $("#card");
+    if (!q) {
+      card.innerHTML = '<div class="empty"><span class="big">🔎</span><b>这个筛选下没有题目</b>换个题型试试吧</div>';
+      updateChrome();
+      return;
+    }
+    const a = answerOf(q);
+    const checked = !!a;
+    const star = !!S.fav[q.id];
+
+    let badge = '<span class="badge ' + q.type + '">' + TYPE_NAME[q.type] + '</span>';
+    if (checked) badge += a.correct ? '<span class="badge ok">✓ 回答正确</span>' : '<span class="badge bad">✗ 回答错误</span>';
+    if (q.flag) badge += '<span class="badge flag">⚠ 答案存疑</span>';
+
+    const opts = q.options.map((text, i) => {
+      let cls = "option", mark = "";
+      if (checked) {
+        if (i === q.answer) { cls += " correct"; mark = "正确答案"; }
+        else if (i === a.chosen) { cls += " wrong"; mark = "你的选择"; }
+        else cls += " dim";
+      }
+      return '<button class="' + cls + '" data-i="' + i + '"' + (checked ? " disabled" : "") + '>' +
+        '<span class="key">' + keyOf(q, i) + '</span><span class="txt">' + esc(text) + '</span>' +
+        (mark ? '<span class="mark">' + mark + '</span>' : '') + '</button>';
+    }).join("");
+
+    let expl = "";
+    if (checked) {
+      expl = '<div class="explain"><h4>正确答案 ' + keyOf(q, q.answer) + (a.correct ? " · 你答对了" : "") + '</h4>' +
+        '<p>' + esc(q.explain || ("正确答案为 " + q.options[q.answer])) + '</p>' +
+        (q.flag ? '<div class="warn">⚠ ' + esc(q.flag) + '</div>' : '') + '</div>';
+    }
+
+    const total = ids.length;
+    card.innerHTML = '<div class="card">' +
+      '<div class="qmeta">' + badge + '<span class="qno">第 ' + (idx + 1) + ' / ' + total + ' 题</span></div>' +
+      '<div class="qtext">' + esc(q.q) + '</div>' +
+      '<div class="options">' + opts + '</div>' + expl +
+      '<div class="under">' +
+        (checked ? '<button class="linkbtn" id="redoBtn">重做本题</button>' : '<span class="linkbtn" style="visibility:hidden">占位</span>') +
+        '<button class="nextbig" id="nextBig"' + (idx >= total - 1 ? " disabled" : "") + '>下一题 →</button>' +
+      '</div>' +
+      '</div>';
+
+    card.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => choose(q, +b.dataset.i)));
+    const redo = $("#redoBtn"); if (redo) redo.addEventListener("click", () => redoQ(q));
+    const nb = $("#nextBig"); if (nb) nb.addEventListener("click", () => go(1));
+
+    $("#starBtn").textContent = star ? "★" : "☆";
+    $("#starBtn").classList.toggle("on", star);
+    if (animate) card.firstElementChild.style.animation = "in .18s ease";
+    updateChrome();
+  }
+
+  function choose(q, i) {
+    if (S.answers[q.id]) return;
+    const correct = i === q.answer;
+    S.answers[q.id] = { chosen: i, correct: correct, ts: Date.now() };
+    if (correct) {
+      if (S.wrong[q.id]) { S.wrong[q.id] -= 1; if (S.wrong[q.id] <= 0) delete S.wrong[q.id]; }
+    } else {
+      S.wrong[q.id] = (S.wrong[q.id] || 0) + 1;
+    }
+    save();
+    render(true);
+    if (navigator.vibrate) { try { navigator.vibrate(correct ? 12 : [10, 40, 10]); } catch (e) {} }
+  }
+
+  function redoQ(q) {
+    if (!S.answers[q.id]) return;
+    delete S.answers[q.id];
+    save(); render(true); toast("已重置本题");
+  }
+
+  function go(d) {
+    if (!ids.length) return;
+    const n = idx + d;
+    if (n < 0 || n >= ids.length) return;
+    idx = n; render(true);
+    $("#scroller").scrollTop = 0;
+  }
+
+  function jump(i) {
+    if (i < 0 || i >= ids.length) return;
+    idx = i; render(true);
+    $("#scroller").scrollTop = 0;
+    closeSheet();
+  }
+
+  function toggleStar() {
+    const q = current();
+    if (!q) return;
+    if (S.fav[q.id]) { delete S.fav[q.id]; toast("已取消收藏"); }
+    else { S.fav[q.id] = true; toast("已收藏"); }
+    save(); render(false);
+  }
+
+  function updateChrome() {
+    const q = current();
+    const total = ids.length;
+    $("#posText").textContent = total ? (idx + 1) + " / " + total : "0 / 0";
+    $("#prevBtn").disabled = idx <= 0;
+    $("#nextBtn").disabled = !total || idx >= total - 1;
+    if (!q) { $("#starBtn").disabled = true; return; }
+    $("#starBtn").disabled = false;
+    const answered = Object.keys(S.answers).length;
+    $("#answeredCount").textContent = answered;
+    $("#progressBar").style.width = (ALL.length ? answered / ALL.length * 100 : 0) + "%";
+  }
+
+  /* ---------------- sheet ---------------- */
+  let sheetOpen = false;
+  function openSheet() {
+    renderSheet();
+    sheetOpen = true;
+    $("#backdrop").classList.add("show");
+    $("#sheet").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function closeSheet() {
+    sheetOpen = false;
+    $("#backdrop").classList.remove("show");
+    $("#sheet").classList.remove("show");
+    document.body.style.overflow = "";
+  }
+  function renderSheet() {
+    const answered = Object.keys(S.answers).length;
+    const correct = Object.keys(S.answers).filter(id => S.answers[id].correct).length;
+    $("#stAnswered").textContent = answered;
+    $("#stAcc").textContent = answered ? Math.round(correct / answered * 100) + "%" : "—";
+    $("#stWrong").textContent = Object.keys(S.wrong).length;
+    $("#filterCount").textContent = ids.length;
+    $("#sheetSummary").textContent = (idx + 1) + " / " + ids.length;
+    $("#shuffleSwitch").classList.toggle("on", !!S.settings.shuffle);
+    $("#themeSwitch").classList.toggle("on", S.settings.theme === "dark");
+    document.querySelectorAll("#typeSeg button").forEach(b => b.classList.toggle("active", b.dataset.filter === S.settings.filter));
+
+    $("#qgrid").innerHTML = ids.map((id, i) => {
+      const a = S.answers[id];
+      let cls = a ? (a.correct ? "ok" : "bad") : "";
+      if (i === idx) cls += " cur";
+      return '<button class="' + cls + '" data-jump="' + i + '">' + (i + 1) + '</button>';
+    }).join("");
+    $("#qgrid").querySelectorAll("[data-jump]").forEach(b => b.addEventListener("click", () => jump(+b.dataset.jump)));
+  }
+
+  /* ---------------- events ---------------- */
+  $("#prevBtn").addEventListener("click", () => go(-1));
+  $("#nextBtn").addEventListener("click", () => go(1));
+  $("#starBtn").addEventListener("click", toggleStar);
+  $("#sheetBtn").addEventListener("click", openSheet);
+  $("#gridBtn").addEventListener("click", openSheet);
+  $("#backdrop").addEventListener("click", closeSheet);
+  $("#closeSheet").addEventListener("click", closeSheet);
+  $("#typeSeg").addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    S.settings.filter = b.dataset.filter;
+    save();
+    idx = 0;
+    buildList(false);
+    render(true);
+    renderSheet();
+  });
+  $("#shuffleSwitch").addEventListener("click", () => {
+    S.settings.shuffle = !S.settings.shuffle;
+    save(); idx = 0; buildList(false); render(true); renderSheet();
+    toast(S.settings.shuffle ? "已开启随机顺序" : "已恢复顺序");
+  });
+  $("#themeSwitch").addEventListener("click", () => {
+    S.settings.theme = S.settings.theme === "dark" ? "light" : "dark";
+    S.settings.themeTouched = true;
+    save(); applyTheme(); renderSheet();
+  });
+  let resetArmed = false, resetTimer = null;
+  $("#resetBtn").addEventListener("click", () => {
+    if (!resetArmed) {
+      resetArmed = true;
+      $("#resetBtn").textContent = "再点一次确认清空";
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => { resetArmed = false; $("#resetBtn").textContent = "清空记录"; }, 3200);
+      return;
+    }
+    resetArmed = false;
+    $("#resetBtn").textContent = "清空记录";
+    S.answers = {}; S.wrong = {}; S.fav = {};
+    save(); render(true); renderSheet(); toast("记录已清空");
+  });
+
+  // swipe
+  let tX = 0, tY = 0, tracking = false;
+  const scroller = $("#scroller");
+  scroller.addEventListener("touchstart", e => {
+    if (sheetOpen || e.touches.length !== 1) return;
+    tX = e.touches[0].clientX; tY = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  scroller.addEventListener("touchend", e => {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - tX, dy = t.clientY - tY;
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 45 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+      go(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && sheetOpen) closeSheet();
+    if (e.key === "ArrowRight") go(1);
+    if (e.key === "ArrowLeft") go(-1);
+  });
+
+  function applyTheme() {
+    document.documentElement.dataset.theme = S.settings.theme;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = S.settings.theme === "dark" ? "#0a1120" : "#4a63e7";
+  }
+
+  // PWA
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  }
+
+  applyTheme();
+  document.getElementById("totalCount").textContent = ALL.length;
+  buildList(false);
+  render(true);
+
+  window.addEventListener("resize", () => { if (sheetOpen) renderSheet(); });
+})();
+</script>
+</body>
+</html>
