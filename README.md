@@ -1,5 +1,7 @@
 # 计算机程序设计员（四级）题库
 
+> 面向使用者的完整说明（安装、权限、数据位置、常见问题）：[使用说明.md](使用说明.md)
+
 一套离线题库，四种用法：
 
 | 版本 | 获取方式 | 特点 |
@@ -39,6 +41,8 @@
 
 ```
 ├── index.html              # 落地页（两个版本入口）
+├── 使用说明.md             # 使用者文档（安装 / 权限 / 数据 / FAQ）
+├── SHA256SUMS.txt          # 安装包校验值
 ├── pc/index.html           # 电脑版应用
 ├── mobile/index.html       # 手机版应用（PWA）
 │   ├── manifest.webmanifest
@@ -55,6 +59,7 @@
 ├── dist/                   # 离线单文件版本
 ├── desktop/                # Windows 桌面版（.NET 8 + WebView2）
 ├── android/                # Android 原生壳（WebView 加载内置题库）
+├── docs/                   # 预览图
 ├── release/                # 构建产物（exe / apk，不提交）
 └── tools/                  # 数据、桌面端、APK、图标与二维码构建脚本
 ```
