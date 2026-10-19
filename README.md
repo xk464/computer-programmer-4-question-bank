@@ -1,15 +1,24 @@
 # 计算机程序设计员（四级）题库
 
-一套离线题库，两种用法：
+一套离线题库，四种用法：
 
-| 版本 | 位置 | 特点 |
+| 版本 | 获取方式 | 特点 |
 | --- | --- | --- |
-| 电脑版 | [`pc/index.html`](pc/index.html) | 本地即时判分、模拟考试、错题本、收藏、搜索、实操资料、深色模式、键盘快捷键 |
-| 手机版 | [`mobile/index.html`](mobile/index.html) | **只有选择题**，大按钮点选即判、滑动切题、答题卡、可安装为 PWA 离线使用 |
+| Windows 桌面版 | [Tiku-Desktop-1.0.0.exe](https://github.com/xk464/computer-programmer-4-question-bank/releases/download/v1.0.0/Tiku-Desktop-1.0.0.exe) | 双击运行，自包含 .NET 运行时；本地判分、模拟考试、错题本、收藏、搜索、实操资料 |
+| Android 手机版 | [Tiku-Android-1.0.0.apk](https://github.com/xk464/computer-programmer-4-question-bank/releases/download/v1.0.0/Tiku-Android-1.0.0.apk) | **只有选择题**，大按钮点选即判、滑动切题、答题卡，完全离线且不申请网络权限 |
+| 电脑网页版 | [`pc/index.html`](pc/index.html) | 免安装，浏览器直接打开，功能与桌面版一致 |
+| 手机网页版 | [`mobile/index.html`](mobile/index.html) | PWA，可「添加到主屏幕」离线使用 |
 
 在线访问：<https://xk464.github.io/computer-programmer-4-question-bank/>
 
-![电脑版预览](docs/preview-pc.png)
+## 下载安装
+
+- **Windows**：下载 `Tiku-Desktop-1.0.0.exe`（约 64 MB）双击运行，无需安装 .NET。程序未做代码签名，SmartScreen 提示时选择「更多信息 → 仍要运行」。需要系统已安装 WebView2 运行时（Windows 11 自带，Windows 10 可通过系统更新安装）。
+- **Android**：下载 `Tiku-Android-1.0.0.apk`（约 85 KB），允许「安装未知应用」后安装。使用 debug 签名，仅适合个人学习与侧载；上架应用商店需自行替换为 release 签名。应用不申请网络权限，所有题目与记录都在本机。
+
+![桌面版预览](docs/preview-desktop-app.png)
+
+![电脑版网页预览](docs/preview-pc.png)
 
 <img src="docs/preview-mobile.png" alt="手机版预览" width="320">
 
@@ -42,7 +51,10 @@
 │   └── practical.json      # 实操资料
 ├── source/                 # 原始文件（Excel / Word）
 ├── dist/                   # 离线单文件版本
-└── tools/                  # 数据构建、图标与二维码生成脚本
+├── desktop/                # Windows 桌面版（.NET 8 + WebView2）
+├── android/                # Android 原生壳（WebView 加载内置题库）
+├── release/                # 构建产物（exe / apk，不提交）
+└── tools/                  # 数据、桌面端、APK、图标与二维码构建脚本
 ```
 
 ## 本地使用
@@ -63,6 +75,31 @@ python tools/build_dist.py      # 生成 dist/ 离线单文件
 ```
 
 需要 `openpyxl`、`python-docx`；图标与二维码脚本另需 `Pillow`、`qrcode`。
+
+## 构建 Windows 桌面版
+
+需要 .NET 8 SDK 与 Windows。桌面端使用 WebView2 渲染同一套网页，并把网页资源嵌入 exe：
+
+```bash
+python tools/build_desktop_web.py
+dotnet publish desktop/TikuDesktop.csproj -c Release -r win-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+  -p:EnableCompressionInSingleFile=true -o release/desktop
+```
+
+产物 `release/desktop/TikuDesktop.exe` 为单文件自包含程序（约 64 MB），目标机器需要 WebView2 运行时。程序优先把题库与答题记录写入 `%LOCALAPPDATA%\ComputerProgrammer4Tiku`，若该目录不可写会自动回退到 exe 同级的 `TikuData`，也可用环境变量 `TIKU_DATA_DIR` 指定。
+
+## 构建 Android APK
+
+需要 JDK 17、Android SDK（build-tools 34、platform 34）。`aapt2` 不支持中文路径，因此脚本会先把工程复制到 `C:\tiku-apk` 并在 `C:\android-sdk` 下调用 SDK：
+
+```bash
+python tools/make_android_icons.py
+python tools/build_android_web.py
+python tools/build_apk.py
+```
+
+脚本依次执行 aapt2 资源编译、javac、d8、zipalign、apksigner，首次运行会生成 `android/debug.keystore` 用于调试签名，产物为 `release/Tiku-Android-1.0.0.apk`。
 
 ## 数据说明
 

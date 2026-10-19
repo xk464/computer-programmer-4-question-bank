@@ -12,5 +12,20 @@ _docx.json
 .whale-craft/
 .edge*/
 shots/
+
+# 原始文件（副本已放在 source/）
 /*.xlsx
 /*.docx
+
+# 构建依赖与产物
+/android-sdk/
+/build-tools-dl/
+/build/
+/release/
+/desktop/bin/
+/desktop/obj/
+/desktop/TikuData/
+/desktop/TikuDesktop-startup.log
+/desktop/web/
+/android/debug.keystore
+/android/app/src/main/assets/

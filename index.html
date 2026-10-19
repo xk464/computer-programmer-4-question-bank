@@ -158,6 +158,7 @@ section{padding:52px 0}
 .dl-links{display:flex;gap:9px;flex-wrap:wrap}
 .dl-links a{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 13px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text)}
 .dl-links a:hover{border-color:var(--primary);color:var(--primary)}
+.dl-note{font-size:11.5px;color:var(--muted-2);margin:12px 0 0!important;line-height:1.65;max-width:640px}
 .qr{text-align:center}
 .qr img{width:132px;height:132px;border-radius:14px;border:1px solid var(--border);background:#fff;padding:6px}
 .qr p{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.5}
@@ -215,10 +216,10 @@ footer{border-top:1px solid var(--border);margin-top:36px;padding:26px 0 40px;fo
     <h1>398 道题，<br><span class="grad">电脑手机都能刷</span></h1>
     <p class="lede">电脑版完整判分、模拟考试与错题本；手机版只留选择题，点开即刷。免注册、无广告、完全离线，答题记录只存在你自己的设备上。</p>
     <div class="cta-row">
-      <a class="btn primary" href="./pc/">电脑版 · 开始练习</a>
-      <a class="btn secondary" href="./mobile/">手机版 · 打开即刷</a>
+      <a class="btn primary" href="https://github.com/xk464/computer-programmer-4-question-bank/releases/latest/download/Tiku-Desktop-1.0.0.exe">下载 Windows 版 (.exe)</a>
+      <a class="btn secondary" href="https://github.com/xk464/computer-programmer-4-question-bank/releases/latest/download/Tiku-Android-1.0.0.apk">下载安卓版 (.apk)</a>
     </div>
-    <p class="cta-note">开源项目 · 数据来自《计算机程序设计员 4 级题库》与《实操复习题》</p>
+    <p class="cta-note">免安装网页版：<a href="./pc/">电脑端</a> · <a href="./mobile/">手机端</a> · 开源项目，数据来自《计算机程序设计员 4 级题库》与《实操复习题》</p>
 
     <div class="stats">
       <div class="stat"><b data-count="total">398</b><span>道题（去重）</span></div>
@@ -324,17 +325,19 @@ footer{border-top:1px solid var(--border);margin-top:36px;padding:26px 0 40px;fo
   <div class="wrap">
     <div class="dl reveal">
       <div>
-        <h3>下载单文件，离线也能用</h3>
-        <p>把网页保存成一个 HTML 文件：拷到 U 盘、发到微信，双击就能刷题，不需要安装任何软件。</p>
+        <h3>下载安装包</h3>
+        <p>Windows 双击即用，自带 .NET 运行时；Android 直接安装，断网也能刷。电脑版 64 MB，安卓版不到 0.1 MB。</p>
         <div class="dl-links">
-          <a href="./dist/题库-电脑版-离线.html" download>⬇ 电脑版离线单文件</a>
-          <a href="./dist/题库-手机版-离线.html" download>⬇ 手机版离线单文件</a>
-          <a href="./pc/">在线使用电脑版</a>
+          <a href="https://github.com/xk464/computer-programmer-4-question-bank/releases/latest/download/Tiku-Desktop-1.0.0.exe">⬇ Windows 桌面版 .exe</a>
+          <a href="https://github.com/xk464/computer-programmer-4-question-bank/releases/latest/download/Tiku-Android-1.0.0.apk">⬇ Android 安装包 .apk</a>
+          <a href="./pc/">免安装网页版</a>
+          <a href="./dist/题库-电脑版-离线.html" download>离线 HTML</a>
         </div>
+        <p class="dl-note">安装包未做代码签名：Windows 若提示“已保护你的电脑”，点“更多信息 → 仍要运行”；Android 安装时需允许浏览器或文件管理器“安装未知应用”。桌面版需要系统已有 WebView2 运行时（Windows 11 自带，Windows 10 可通过系统更新安装）。</p>
       </div>
       <div class="qr">
         <img src="./assets/qr-mobile.png" alt="手机版二维码" width="132" height="132">
-        <p>手机扫码打开手机版<br><code>xk464.github.io/computer-programmer-4-question-bank/mobile/</code></p>
+        <p>扫码打开手机网页版<br><code>xk464.github.io/computer-programmer-4-question-bank/mobile/</code></p>
       </div>
     </div>
 
