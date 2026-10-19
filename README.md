@@ -18,6 +18,8 @@
 
 ![桌面版预览](docs/preview-desktop-app.png)
 
+<img src="docs/preview-android-answered.png" alt="Android 应用" width="300">
+
 ![电脑版网页预览](docs/preview-pc.png)
 
 <img src="docs/preview-mobile.png" alt="手机版预览" width="320">
