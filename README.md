@@ -9,6 +9,10 @@
 
 在线访问：<https://xk464.github.io/computer-programmer-4-question-bank/>
 
+![电脑版预览](docs/preview-pc.png)
+
+<img src="docs/preview-mobile.png" alt="手机版预览" width="320">
+
 ## 功能
 
 - **398 道题**：单选题 306 道 + 判断题 92 道（原始 Excel 400 题，2 题因缺图且无答案未收录）。

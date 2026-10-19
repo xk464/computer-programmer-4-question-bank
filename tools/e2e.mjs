@@ -8,7 +8,7 @@ const ROOT = "C:\\Users\\徐\\Desktop\\mc";
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const PORT = 9333;
 const DEBUG = `http://127.0.0.1:${PORT}`;
-const BASE = "http://127.0.0.1:8765";
+const BASE = process.env.BASE || "http://127.0.0.1:8765";
 const SHOTS = path.join(ROOT, "shots");
 const PROFILE = path.join(ROOT, ".edge-e2e");
 
