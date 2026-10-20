@@ -20,7 +20,7 @@
   var CSS = [
     ".ts-overlay{position:fixed;inset:0;z-index:200;display:flex;background:#07101f;color:#e8eef9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-size:13px}",
     ".ts-desk{position:relative;flex:1;min-width:0;background:radial-gradient(900px 520px at 68% 8%,#2452a8 0%,#13294f 45%,#071326 100%);overflow:hidden}",
-    ".ts-icons{position:absolute;left:18px;top:18px;display:flex;flex-direction:column;gap:12px;z-index:2}",
+    ".ts-icons{position:absolute;left:18px;top:54px;display:flex;flex-direction:column;gap:12px;z-index:2}",
     ".ts-icon{width:96px;border:0;background:transparent;color:#fff;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;line-height:1.3;text-align:center;padding:6px 3px;border-radius:8px;cursor:pointer}",
     ".ts-icon:hover{background:rgba(255,255,255,.13)}",
     ".ts-icon .g{font-size:32px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}",
@@ -91,7 +91,17 @@
     ".ts-table th{text-align:left;background:#e8eef8;color:#42536e;padding:6px 8px;border:1px solid #d6deeb;font-weight:600}",
     ".ts-table td{padding:6px 8px;border:1px solid #e1e8f3;color:#2b3a55;vertical-align:top}",
     ".ts-table .path{font-family:Consolas,monospace;font-size:11px;color:#344a6b;word-break:break-all}",
-    ".ts-install-log{background:#0d1b2e;border:1px solid #2b4468;border-radius:8px;padding:8px 10px;font-family:Consolas,monospace;font-size:11.5px;color:#9fd6b8;line-height:1.7;min-height:52px;margin-top:8px}"
+    ".ts-install-log{background:#0d1b2e;border:1px solid #2b4468;border-radius:8px;padding:8px 10px;font-family:Consolas,monospace;font-size:11.5px;color:#9fd6b8;line-height:1.7;min-height:52px;margin-top:8px}",
+    ".ts-vmbar{position:absolute;top:0;left:0;right:0;height:38px;z-index:7;display:flex;align-items:center;gap:12px;padding:0 14px;background:rgba(3,10,22,.85);border-bottom:1px solid #223a5e;font-size:12px;color:#cfe0ff}",
+    ".ts-vmbar .ts-snap{margin-left:auto;color:#8fd6b0;font-size:11.5px}",
+    ".ts-vmbar button{border:1px solid #35507e;background:#16294a;color:#dbe6ff;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer}",
+    ".ts-vmbar button:hover{border-color:#6f8dff}",
+    ".ts-boot{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:radial-gradient(600px 400px at 50% 35%,#102446 0%,#050b14 70%);color:#dbe6ff;text-align:center}",
+    ".ts-boot-logo{font-size:58px;filter:drop-shadow(0 0 24px rgba(90,140,255,.55))}",
+    ".ts-boot h2{margin:0;font-size:20px}",
+    ".ts-boot p{margin:0;font-size:12.5px;color:#9fb3d1}",
+    ".ts-boot .ts-progress{width:min(420px,62%)}",
+    ".ts-boot .ts-boot-small{font-size:11px;color:#6f86a8;margin-top:4px}"
   ].join("\n");
 
   function injectCss() {
@@ -141,8 +151,14 @@
   var SANDBOX_DESKTOP = SANDBOX_USER + "\\Desktop";
   var SANDBOX_START = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs";
 
-  function defaultSandbox() {
-    return { files: [], shortcuts: [], registry: [], installedApp: false };
+  function defaultSandbox(variant) {
+    var sb = { files: [], shortcuts: [], registry: [], installedApp: false };
+    if (variant === "sublime") {
+      sb.files.push({ path: SANDBOX_DESKTOP + "\\SublimeText.zip", size: "15.8 MB", kind: "压缩文件" });
+    } else {
+      sb.files.push({ path: SANDBOX_DESKTOP + "\\VSCodeUserSetup-x64-1.94.2.exe", size: "96.8 MB", kind: "安装程序" });
+    }
+    return sb;
   }
 
   function addSandboxFile(path, size, kind, content) {
@@ -190,8 +206,10 @@
   function resetSandbox() {
     if (!s) return;
     if (s.installTimer) { clearInterval(s.installTimer); s.installTimer = null; }
+    if (s.extractTimer) { clearInterval(s.extractTimer); s.extractTimer = null; }
+    if (s.bootTimer) { clearInterval(s.bootTimer); s.bootTimer = null; }
     var variant = s.variant;
-    s.sandbox = defaultSandbox();
+    s.sandbox = defaultSandbox(variant);
     s.stage = "desktop";
     s.installerStarted = false;
     s.accept = false;
@@ -214,8 +232,12 @@
     s.galleryOpen = false;
     s.installLog = [];
     s.installPct = 0;
+    s.extracted = false;
+    s.extractPct = 0;
+    s.extractLog = [];
+    s.bootPct = 0;
     s.variant = variant;
-    s.tip = "沙盒已还原：虚拟文件、快捷方式和注册表已全部清空";
+    s.tip = "快照已恢复：考试起始状态（内置 zip / 安装包已就位）";
     render();
   }
 
@@ -244,14 +266,20 @@
       fileName: "hello.html",
       tip: "",
       galleryOpen: false,
-      sandbox: defaultSandbox(),
+      sandbox: null,
       explorerOpen: false,
       installLog: [],
       installPct: 0,
-      installTimer: null
-    };    s.tip = s.variant === "sublime"
-      ? "双击桌面上的 Sublime Text 安装包开始"
-      : "双击桌面上的 VS Code 安装包开始";
+      installTimer: null,
+      bootPct: 0,
+      bootTimer: null,
+      extracted: false,
+      extractPct: 0,
+      extractLog: [],
+      extractTimer: null
+    };
+    s.sandbox = defaultSandbox(s.variant);
+    s.tip = "正在启动虚拟机并恢复考试起始快照";
 
     overlay = document.createElement("div");
     overlay.className = "ts-overlay";
@@ -261,12 +289,14 @@
     overlay.addEventListener("input", onInput);
     overlay.addEventListener("change", onChange);
     overlay.addEventListener("keydown", onKeyDown);
-    render();
+    startBoot();
   }
 
   function close() {
     if (!overlay) return;
     if (s && s.installTimer) { clearInterval(s.installTimer); s.installTimer = null; }
+    if (s && s.extractTimer) { clearInterval(s.extractTimer); s.extractTimer = null; }
+    if (s && s.bootTimer) { clearInterval(s.bootTimer); s.bootTimer = null; }
     overlay.remove();
     overlay = null;
     s = null;
@@ -277,13 +307,62 @@
 
   function setTip(text) { s.tip = text; render(); }
 
+  function startBoot() {
+    if (!s) return;
+    s.stage = "booting";
+    s.bootPct = 0;
+    s.tip = "正在启动虚拟机并恢复考试起始快照";
+    render();
+    if (s.bootTimer) clearInterval(s.bootTimer);
+    s.bootTimer = setInterval(function () {
+      if (!overlay || s.stage !== "booting") {
+        if (s.bootTimer) clearInterval(s.bootTimer);
+        s.bootTimer = null;
+        return;
+      }
+      s.bootPct = Math.min(100, (s.bootPct || 0) + 20);
+      render();
+      if (s.bootPct >= 100) {
+        clearInterval(s.bootTimer); s.bootTimer = null;
+        setTimeout(function () {
+          if (!overlay || s.stage !== "booting") return;
+          s.stage = "desktop";
+          s.tip = "虚拟机已启动：快照“考试起始状态”已恢复";
+          render();
+        }, 300);
+      }
+    }, 220);
+  }
+
+  function bootHtml() {
+    return '<div class="ts-boot">' +
+      '<div class="ts-boot-logo">🖥️</div>' +
+      '<h2>虚拟机正在启动</h2>' +
+      '<p>正在恢复快照：考试起始状态</p>' +
+      '<div class="ts-progress"><i style="width:' + (s.bootPct || 0) + '%"></i></div>' +
+      '<p class="ts-boot-small">虚拟磁盘 C:\\TikuVM\\disk.vhd · 快照 disk-考试起始状态</p>' +
+      '</div>';
+  }
+
   function render() {
     if (!overlay) return;
     var p = product();
-    var icons = '<button class="ts-icon" data-icon="installer"><span class="g">⚙️</span><span>' + esc(p.setup) + '</span></button>' +
-      '<button class="ts-icon" data-icon="pc"><span class="g">🖥️</span><span>此电脑</span></button>';
-    if (s.shortcut) icons += '<button class="ts-icon" data-icon="shortcut"><span class="g">📝</span><span>' + esc(p.name) + '</span></button>';
-    if (s.saved) icons += '<button class="ts-icon" data-icon="html"><span class="g">🌐</span><span>' + esc(s.fileName) + '</span></button>';
+    var booting = s.stage === "booting";
+    var icons = "";
+    if (!booting) {
+      if (s.variant === "sublime") {
+        icons += s.extracted
+          ? '<button class="ts-icon" data-icon="folder"><span class="g">📁</span><span>SublimeText</span></button>'
+          : '<button class="ts-icon" data-icon="zip"><span class="g">📦</span><span>SublimeText.zip</span></button>';
+      } else {
+        icons += '<button class="ts-icon" data-icon="setup"><span class="g">⚙️</span><span>' + esc(p.setup) + '</span></button>';
+      }
+      icons += '<button class="ts-icon" data-icon="pc"><span class="g">🖥️</span><span>此电脑</span></button>';
+      if (s.shortcut) icons += '<button class="ts-icon" data-icon="shortcut"><span class="g">📝</span><span>' + esc(p.name) + '</span></button>';
+      if (s.saved) icons += '<button class="ts-icon" data-icon="html"><span class="g">🌐</span><span>' + esc(s.fileName) + '</span></button>';
+    }
+    var vmbar = booting ? "" :
+      '<div class="ts-vmbar"><span>🖥 虚拟机 · Windows 10</span><span class="ts-snap">快照：考试起始状态</span><button data-act="reset-sandbox">恢复快照</button></div>';
 
     var list = checklist();
     var current = list.findIndex(function (t) { return !t.done; });
@@ -293,25 +372,27 @@
 
     overlay.innerHTML =
       '<div class="ts-desk">' +
-        '<div class="ts-icons">' + icons + '</div>' +
+        vmbar +
+        (icons ? '<div class="ts-icons">' + icons + '</div>' : '') +
         windowHtml() +
-        '<div class="ts-tip">' + esc(s.tip || "按右侧步骤完成实操") + '</div>' +
+        (booting ? '' : '<div class="ts-tip">' + esc(s.tip || "按右侧步骤完成实操") + '</div>') +
       '</div>' +
       '<aside class="ts-side">' +
         '<h4>' + esc(p.name) + ' 安装全流程</h4>' +
         '<div class="sub">依据实操要求与安装器实际向导页</div>' +
-        '<div class="ts-sandbox-note">🧪 应用内虚拟沙盒<br>文件 / 快捷方式 / 注册表均不写入真实电脑</div>' +
+        '<div class="ts-sandbox-note">🖥️ 应用内虚拟机 · 快照恢复<br>虚拟磁盘、内置 zip/安装包，关机后丢弃改动</div>' +
         '<ul class="ts-steps">' + steps + '</ul>' +
-        '<button class="close" data-act="explorer" style="margin-top:auto">沙盒文件</button>' +
+        '<button class="close" data-act="explorer" style="margin-top:auto">虚拟机文件</button>' +
         '<button class="close" data-act="gallery" style="margin-top:0">查看真实安装界面</button>' +
-        '<button class="close" data-close style="margin-top:0">退出并还原沙盒</button>' +
+        '<button class="close" data-close style="margin-top:0">关机并丢弃更改</button>' +
       '</aside>';
   }
 
   function checklist() {
     if (s.variant === "sublime") {
       return [
-        { text: "双击安装包，进入向导", done: s.installerStarted },
+        { text: "解压 SublimeText.zip", done: s.extracted },
+        { text: "运行安装程序，进入向导", done: s.installerStarted },
         { text: "选择安装位置", done: s.destChosen },
         { text: "选择开始菜单文件夹", done: s.startMenuChosen },
         { text: "完成安装", done: s.installed },
@@ -339,9 +420,12 @@
   }
 
   function windowHtml() {
+    if (s.stage === "booting") return bootHtml();
     if (s.galleryOpen) return galleryHtml();
     if (s.explorerOpen) return explorerHtml();
     if (s.stage === "desktop") return "";
+    if (s.stage === "extract") return extractHtml();
+    if (s.stage === "folder") return folderHtml();
     if (["welcome", "license", "dest", "startmenu", "tasks", "ready", "installing", "finish"].indexOf(s.stage) >= 0) return installerHtml();
     if (s.stage === "shortcut") return shortcutHtml();
     if (s.stage === "editor") return editorHtml();
@@ -349,6 +433,72 @@
     if (s.stage === "runpicker") return runPickerHtml();
     if (s.stage === "browser") return browserHtml();
     return "";
+  }
+
+  function extractHtml() {
+    return '<div class="ts-win"><div class="ts-head">解压文件 - SublimeText.zip</div><div class="ts-body">' +
+      '<h3>解压到</h3>' +
+      '<p>目标文件夹：' + esc(SANDBOX_DESKTOP + "\\SublimeText") + '</p>' +
+      '<div class="ts-progress"><i style="width:' + (s.extractPct || 0) + '%"></i></div>' +
+      '<div class="ts-install-log">' + (s.extractLog || []).map(function (x) {
+        return '<div>✓ ' + esc(x) + '</div>';
+      }).join("") + '</div>' +
+      '<p style="font-size:11.5px;color:#7a879c">解压会在虚拟磁盘中生成 SublimeText 文件夹和安装程序，不会改动真实文件。</p>' +
+      actions([btn("取消", "extract-cancel", "ghost"), btn("解压", "extract-start", "primary")]) +
+      '</div></div>';
+  }
+
+  function folderHtml() {
+    var folder = SANDBOX_DESKTOP + "\\SublimeText";
+    var files = (s.sandbox.files || []).filter(function (f) { return f.path.indexOf(folder + "\\") === 0; });
+    var rows = files.length ? files.map(function (f) {
+      return '<tr><td class="path">' + esc(f.path) + '</td><td>' + esc(f.size) + '</td><td>' + esc(f.kind) + '</td></tr>';
+    }).join("") : '<tr><td colspan="3" style="color:#7a879c">文件夹为空</td></tr>';
+    return '<div class="ts-win"><div class="ts-head">📁 SublimeText - 文件资源管理器</div><div class="ts-body">' +
+      '<p>路径：' + esc(folder) + '</p>' +
+      '<table class="ts-table"><thead><tr><th>名称</th><th>大小</th><th>类型</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<p style="font-size:11.5px;color:#7a879c">双击文件夹里的 <b>sublime_text_build_4152_x64_setup.exe</b> 开始安装。</p>' +
+      actions([btn("返回桌面", "folder-close", "ghost"), btn("运行 sublime_text_build_4152_x64_setup.exe", "run-setup", "primary")]) +
+      '</div></div>';
+  }
+
+  function startExtract() {
+    var steps = [
+      "读取 C:\\Users\\考生\\Desktop\\SublimeText.zip",
+      "解压 sublime_text_build_4152_x64_setup.exe（15.6 MB）",
+      "解压 Readme.txt",
+      "创建文件夹 C:\\Users\\考生\\Desktop\\SublimeText"
+    ];
+    if (s.extractTimer) clearInterval(s.extractTimer);
+    s.extractPct = 0; s.extractLog = []; render();
+    var i = 0;
+    s.extractTimer = setInterval(function () {
+      if (!overlay || s.stage !== "extract") {
+        if (s.extractTimer) clearInterval(s.extractTimer);
+        s.extractTimer = null;
+        return;
+      }
+      i++;
+      s.extractPct = Math.min(100, Math.round(i * 100 / steps.length));
+      if (steps[i - 1]) s.extractLog.push(steps[i - 1]);
+      render();
+      if (i >= steps.length) {
+        clearInterval(s.extractTimer); s.extractTimer = null;
+        addSandboxFile("C:\\Users\\考生\\Desktop\\SublimeText\\sublime_text_build_4152_x64_setup.exe", "15.6 MB", "安装程序");
+        addSandboxFile("C:\\Users\\考生\\Desktop\\SublimeText\\Readme.txt", "2 KB", "文本文件");
+        s.extracted = true;
+        s.stage = "desktop";
+        s.tip = "解压完成：SublimeText 文件夹已生成在虚拟桌面";
+        render();
+      }
+    }, 260);
+  }
+
+  function startInstaller() {
+    s.installerStarted = true;
+    s.stage = s.variant === "sublime" ? "dest" : "license";
+    s.tip = s.variant === "sublime" ? "Sublime 安装器第一页就是选择安装位置，点“下一步”" : "勾选接受协议后点“下一步”";
+    render();
   }
 
   function installerHtml() {
@@ -541,15 +691,15 @@
       return '<tr><td class="path">' + esc(x.key) + '</td><td class="path">' + esc(x.value) + '</td></tr>';
     }).join("") : '<tr><td colspan="2" style="color:#7a879c">暂无注册表项</td></tr>';
 
-    return '<div class="ts-win"><div class="ts-head">🧪 沙盒文件管理器 · 虚拟 C 盘</div><div class="ts-body">' +
-      '<p>这里的文件、快捷方式和注册表只存在于本次模拟沙盒，退出或点“还原沙盒”后全部清空，不会改动真实电脑。</p>' +
+    return '<div class="ts-win"><div class="ts-head">🖥️ 虚拟机文件管理器 · 虚拟磁盘 C:</div><div class="ts-body">' +
+      '<p>这里的文件、快捷方式和注册表来自虚拟机快照“考试起始状态”，本次操作只写入虚拟磁盘。关机或恢复快照后全部丢弃，不会改动真实电脑。</p>' +
       '<h3>已安装文件</h3>' +
       '<table class="ts-table"><thead><tr><th>路径</th><th>大小</th><th>类型</th></tr></thead><tbody>' + fileRows + '</tbody></table>' +
       '<h3>快捷方式</h3>' +
       '<table class="ts-table"><thead><tr><th>位置</th><th>名称</th><th>目标</th></tr></thead><tbody>' + scRows + '</tbody></table>' +
       '<h3>注册表</h3>' +
       '<table class="ts-table"><thead><tr><th>键</th><th>值</th></tr></thead><tbody>' + regRows + '</tbody></table>' +
-      actions([btn("还原沙盒", "reset-sandbox", "ghost"), btn("返回", "explorer-close", "primary")]) +
+      actions([btn("恢复快照", "reset-sandbox", "ghost"), btn("返回", "explorer-close", "primary")]) +
       '</div></div>';
   }
 
@@ -572,10 +722,15 @@
     var icon = t.closest("[data-icon]");
     if (icon) {
       var name = icon.getAttribute("data-icon");
-      if (name === "installer" && s.stage === "desktop") {
-        s.installerStarted = true;
-        s.stage = s.variant === "sublime" ? "dest" : "license";
-        s.tip = s.variant === "sublime" ? "Sublime 安装器第一页就是选择安装位置，点“下一步”" : "勾选接受协议后点“下一步”";
+      if (name === "zip" && s.stage === "desktop") {
+        s.stage = "extract"; s.extractPct = 0; s.extractLog = [];
+        s.tip = "把 SublimeText.zip 解压到虚拟桌面";
+        render();
+      } else if (name === "setup" && s.stage === "desktop") {
+        startInstaller();
+      } else if (name === "folder" && s.stage === "desktop" && s.extracted) {
+        s.stage = "folder";
+        s.tip = "打开 SublimeText 文件夹，运行安装程序";
         render();
       } else if (name === "shortcut" && s.stage === "desktop" && s.shortcut) {
         s.stage = "editor"; s.editorOpened = true;
@@ -705,8 +860,12 @@
     else if (a === "cancel-install") { close(); }
     else if (a === "gallery") { s.galleryOpen = true; render(); }
     else if (a === "gallery-close") { s.galleryOpen = false; render(); }
-    else if (a === "explorer") { s.explorerOpen = true; s.tip = "沙盒文件管理器"; render(); }
+    else if (a === "explorer") { s.explorerOpen = true; s.tip = "虚拟机文件管理器"; render(); }
     else if (a === "explorer-close") { s.explorerOpen = false; s.tip = ""; render(); }
+    else if (a === "extract-cancel") { s.stage = "desktop"; s.tip = "已取消解压"; render(); }
+    else if (a === "extract-start") { startExtract(); }
+    else if (a === "folder-close") { s.stage = "desktop"; s.tip = "已返回虚拟桌面"; render(); }
+    else if (a === "run-setup") { startInstaller(); }
     else if (a === "reset-sandbox") { resetSandbox(); }
     else if (a === "back") {
       var backMap = { license: s.variant === "sublime" ? "welcome" : "license", dest: "license", startmenu: "dest", tasks: "startmenu", ready: s.variant === "vscode" ? "tasks" : "startmenu" };

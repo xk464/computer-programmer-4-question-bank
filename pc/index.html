@@ -1333,10 +1333,10 @@ int main(void)
   function interactiveDocsHtml(t) {
     if (t.id === 1) {
       return '<div class="sim-panel"><h4>🖥 安装模拟 · 模拟桌面</h4>' +
-        '<p class="desc">按官方安装器的真实页序练习：Sublime 为“选择安装位置 → 开始菜单文件夹 → 安装 → 完成”（没有欢迎/许可页）；VS Code 为“许可 → 位置 → 开始菜单 → 附加任务（勾选创建桌面快捷方式）→ 安装 → 完成”。安装过程在应用内虚拟沙盒中完成，文件、开始菜单、桌面快捷方式和注册表都写入虚拟 C 盘，不碰真实电脑。选择要练习的安装器：</p>' +
+        '<p class="desc">按官方安装器的真实页序练习：Sublime 为“解压 zip → 选择安装位置 → 开始菜单文件夹 → 安装 → 完成”（没有欢迎/许可页）；VS Code 为“许可 → 位置 → 开始菜单 → 附加任务（勾选创建桌面快捷方式）→ 安装 → 完成”。安装过程在应用内虚拟机中完成，启动时恢复“考试起始状态”快照；文件、开始菜单、桌面快捷方式和注册表都写入虚拟磁盘，关机后丢弃。选择要练习的安装器：</p>' +
         '<div class="sim-row"><button class="sim-btn primary" data-install-sim="sublime">Sublime Text 3 安装模拟</button>' +
         '<button class="sim-btn" data-install-sim="vscode">Visual Studio Code 安装模拟</button></div>' +
-        '<p class="desc" style="margin:8px 0 0">模拟界面右侧可点“沙盒文件”查看虚拟 C 盘中的安装结果，点“查看真实安装界面”对照官方截图；退出时自动还原沙盒。Sublime 版本会练习“开始菜单 → 打开文件所在位置 → 发送到桌面快捷方式”；VS Code 版本会在附加任务中勾选“创建桌面快捷方式”（默认未勾选）。</p></div>';
+        '<p class="desc" style="margin:8px 0 0">虚拟机桌面内置 `SublimeText.zip` / VS Code 安装包；右侧可点“虚拟机文件”查看虚拟磁盘中的安装结果，点“查看真实安装界面”对照官方截图；关机或“恢复快照”后回到考试起始状态。Sublime 版本会练习“发送到桌面快捷方式”；VS Code 版本会在附加任务中勾选“创建桌面快捷方式”（默认未勾选）。</p></div>';
     }
     if (t.id === 2) {
       return '<div class="sim-panel"><h4>🔀 流程图练习</h4>' +
