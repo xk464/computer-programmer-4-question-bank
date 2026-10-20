@@ -81,7 +81,11 @@
     ".ts-iframe{width:100%;height:260px;border:1px solid #cfd8e8;border-radius:8px;background:#fff}",
     ".ts-runpick button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:1px solid #c9d4e8;border-radius:8px;background:#fff;color:#22304a;font-size:12.5px;cursor:pointer}",
     ".ts-runpick button:hover{border-color:#4a63e7;background:#eef1ff}",
-    ".ts-shortcut-note{background:#eef4ff;border:1px solid #c9d8f2;border-radius:8px;padding:10px 12px;font-size:12px;color:#3d5273;line-height:1.6;margin-top:10px}"
+    ".ts-shortcut-note{background:#eef4ff;border:1px solid #c9d8f2;border-radius:8px;padding:10px 12px;font-size:12px;color:#3d5273;line-height:1.6;margin-top:10px}",
+    ".ts-gallery{display:grid;gap:12px}",
+    ".ts-gallery figure{margin:0;border:1px solid #c9d4e8;border-radius:8px;overflow:hidden;background:#fff}",
+    ".ts-gallery img{display:block;width:100%;height:auto}",
+    ".ts-gallery figcaption{padding:7px 10px;font-size:11.5px;color:#54708f;background:#f4f7fc;border-top:1px solid #dbe4f2}"
   ].join("\n");
 
   function injectCss() {
@@ -116,6 +120,17 @@
   var overlay = null;
   var s = null;
 
+  var SHOTS = {
+    sublime: [
+      { src: "sim-assets/sublime-dest.png", caption: "Select Destination Location · 真实安装器第一页（无欢迎/许可页）" }
+    ],
+    vscode: [
+      { src: "sim-assets/vscode-license.png", caption: "许可协议（我同意此协议）" },
+      { src: "sim-assets/vscode-tasks.png", caption: "选择附加任务（默认未勾选“创建桌面快捷方式”）" },
+      { src: "sim-assets/vscode-ready.png", caption: "准备安装（附加任务汇总）" }
+    ]
+  };
+
   function open(variant) {
     if (overlay) return;
     injectCss();
@@ -139,9 +154,9 @@
       fileMenu: false,
       langMenu: false,
       fileName: "hello.html",
-      tip: ""
-    };
-    s.tip = s.variant === "sublime"
+      tip: "",
+      galleryOpen: false
+    };    s.tip = s.variant === "sublime"
       ? "双击桌面上的 Sublime Text 安装包开始"
       : "双击桌面上的 VS Code 安装包开始";
 
@@ -192,7 +207,8 @@
         '<h4>' + esc(p.name) + ' 安装全流程</h4>' +
         '<div class="sub">依据实操要求与安装器实际向导页</div>' +
         '<ul class="ts-steps">' + steps + '</ul>' +
-        '<button class="close" data-close>退出模拟</button>' +
+        '<button class="close" data-act="gallery" style="margin-top:auto">查看真实安装界面</button>' +
+        '<button class="close" data-close style="margin-top:0">退出模拟</button>' +
       '</aside>';
   }
 
@@ -200,7 +216,6 @@
     if (s.variant === "sublime") {
       return [
         { text: "双击安装包，进入向导", done: s.installerStarted },
-        { text: "接受许可协议", done: s.accept },
         { text: "选择安装位置", done: s.destChosen },
         { text: "选择开始菜单文件夹", done: s.startMenuChosen },
         { text: "完成安装", done: s.installed },
@@ -217,7 +232,7 @@
       { text: "接受许可协议", done: s.accept },
       { text: "选择安装位置", done: s.destChosen },
       { text: "选择开始菜单文件夹", done: s.startMenuChosen },
-      { text: "附加任务勾选“创建桌面图标”", done: s.tasks.desktop },
+      { text: "附加任务勾选“创建桌面快捷方式”", done: s.tasks.desktop },
       { text: "完成安装", done: s.installed },
       { text: "双击桌面图标打开编辑器", done: s.editorOpened },
       { text: "File → New Text File 并设为 HTML", done: s.newFile && s.lang === "HTML" },
@@ -228,6 +243,7 @@
   }
 
   function windowHtml() {
+    if (s.galleryOpen) return galleryHtml();
     if (s.stage === "desktop") return "";
     if (["welcome", "license", "dest", "startmenu", "tasks", "ready", "installing", "finish"].indexOf(s.stage) >= 0) return installerHtml();
     if (s.stage === "shortcut") return shortcutHtml();
@@ -241,7 +257,7 @@
   function installerHtml() {
     var p = product();
     var stepOrder = s.variant === "sublime"
-      ? ["welcome", "license", "dest", "startmenu", "ready", "installing", "finish"]
+      ? ["dest", "startmenu", "installing", "finish"]
       : ["license", "dest", "startmenu", "tasks", "ready", "installing", "finish"];
     var stepIndex = stepOrder.indexOf(s.stage) + 1;
 
@@ -265,17 +281,17 @@
         '<p>安装程序将把 ' + esc(p.name) + ' 安装到下面的文件夹。点击“下一步”继续，或点击“浏览”选择其他位置。</p>' +
         '<input class="ts-field" value="' + esc(p.path) + '" readonly>' +
         '<p style="font-size:11.5px;color:#7a879c;margin-top:8px">目标文件夹：' + esc(p.path) + '</p>' +
-        actions([btn("← 上一步", "back", "ghost"), btn("下一步 →", "to-startmenu", "primary")]);
+        actions([s.variant === "sublime" ? btn("取消", "cancel-install", "ghost") : btn("← 上一步", "back", "ghost"), btn("下一步 →", "to-startmenu", "primary")]);
     } else if (s.stage === "startmenu") {
       body = '<h3>选择开始菜单文件夹</h3>' +
         '<p>安装程序将在下面的开始菜单文件夹中创建程序的快捷方式。</p>' +
         '<input class="ts-field" value="' + esc(p.menu) + '" readonly>' +
-        actions([btn("← 上一步", "back", "ghost"), btn(s.variant === "vscode" ? "下一步 →" : "安装", s.variant === "vscode" ? "to-tasks" : "to-ready", "primary")]);
+        actions([btn("← 上一步", "back", "ghost"), btn(s.variant === "vscode" ? "下一步 →" : "安装", s.variant === "vscode" ? "to-tasks" : "install", "primary")]);
     } else if (s.stage === "tasks") {
       var t = s.tasks;
       body = '<h3>选择附加任务</h3>' +
         '<p>请选择安装程序要执行的附加任务。</p>' +
-        '<label class="ts-check"><input type="checkbox" data-task="desktop"' + (t.desktop ? " checked" : "") + '> 创建桌面图标<small>考试要求：在桌面生成快捷方式</small></label>' +
+        '<label class="ts-check"><input type="checkbox" data-task="desktop"' + (t.desktop ? " checked" : "") + '> 创建桌面快捷方式<small>考试要求：在桌面生成快捷方式</small></label>' +
         '<label class="ts-check"><input type="checkbox" data-task="file"' + (t.file ? " checked" : "") + '> 将“通过 Code 打开”操作添加到 Windows 资源管理器文件上下文菜单</label>' +
         '<label class="ts-check"><input type="checkbox" data-task="dir"' + (t.dir ? " checked" : "") + '> 将“通过 Code 打开”操作添加到 Windows 资源管理器目录上下文菜单</label>' +
         '<label class="ts-check"><input type="checkbox" data-task="register"' + (t.register ? " checked" : "") + '> 将 Code 注册为受支持的文件类型的编辑器</label>' +
@@ -404,6 +420,17 @@
       '</div></div>';
   }
 
+  function galleryHtml() {
+    var shots = SHOTS[s.variant] || [];
+    return '<div class="ts-win"><div class="ts-head">真实安装界面 · ' + esc(product().name) + '</div><div class="ts-body">' +
+      '<p>以下截图来自官方安装包的实际向导页，可与上面的模拟步骤对照。</p>' +
+      '<div class="ts-gallery">' + shots.map(function (x) {
+        return '<figure><img src="' + esc(x.src) + '" alt="' + esc(x.caption) + '"><figcaption>' + esc(x.caption) + '</figcaption></figure>';
+      }).join("") + '</div>' +
+      actions([btn("返回模拟", "gallery-close", "primary")]) +
+      '</div></div>';
+  }
+
   function onClick(e) {
     var t = e.target;
     var closeBtn = t.closest("[data-close]");
@@ -414,8 +441,8 @@
       var name = icon.getAttribute("data-icon");
       if (name === "installer" && s.stage === "desktop") {
         s.installerStarted = true;
-        s.stage = s.variant === "sublime" ? "welcome" : "license";
-        s.tip = s.variant === "sublime" ? "点击“下一步”继续" : "勾选接受协议后点“下一步”";
+        s.stage = s.variant === "sublime" ? "dest" : "license";
+        s.tip = s.variant === "sublime" ? "Sublime 安装器第一页就是选择安装位置，点“下一步”" : "勾选接受协议后点“下一步”";
         render();
       } else if (name === "shortcut" && s.stage === "desktop" && s.shortcut) {
         s.stage = "editor"; s.editorOpened = true;
@@ -454,12 +481,13 @@
     else if (a === "to-tasks") { s.startMenuChosen = true; s.stage = "tasks"; s.tip = "附加任务中勾选“创建桌面图标”"; render(); }
     else if (a === "to-ready") {
       if (s.stage === "tasks") {
-        if (!s.tasks.desktop) { s.tip = "考试要求在桌面生成快捷方式，请勾选“创建桌面图标”"; render(); return; }
+        if (!s.tasks.desktop) { s.tip = "考试要求在桌面生成快捷方式，请勾选“创建桌面快捷方式”"; render(); return; }
       }
       if (s.stage === "startmenu") s.startMenuChosen = true;
       s.stage = "ready"; s.tip = "点击“安装”开始"; render();
     }
     else if (a === "install") {
+      if (s.stage === "startmenu") s.startMenuChosen = true;
       s.stage = "installing"; s.tip = "正在安装，请稍候"; render();
       setTimeout(function () {
         if (!overlay) return;
@@ -496,6 +524,9 @@
     }
     else if (a === "run-node") { s.tip = "HTML 页面应选择浏览器运行"; render(); }
     else if (a === "finish-close") { close(); }
+    else if (a === "cancel-install") { close(); }
+    else if (a === "gallery") { s.galleryOpen = true; render(); }
+    else if (a === "gallery-close") { s.galleryOpen = false; render(); }
     else if (a === "back") {
       var backMap = { license: s.variant === "sublime" ? "welcome" : "license", dest: "license", startmenu: "dest", tasks: "startmenu", ready: s.variant === "vscode" ? "tasks" : "startmenu" };
       if (s.stage === "license" && s.variant === "vscode") { s.tip = "这是安装向导第一步"; render(); return; }

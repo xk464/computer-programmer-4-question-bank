@@ -1333,10 +1333,10 @@ int main(void)
   function interactiveDocsHtml(t) {
     if (t.id === 1) {
       return '<div class="sim-panel"><h4>🖥 安装模拟 · 模拟桌面</h4>' +
-        '<p class="desc">按考试要求完整走一遍：运行安装包 → 接受协议 → 安装位置 → 开始菜单 → 附加任务 → 完成 → 创建桌面快捷方式 → 编辑 HTML → 保存 → 浏览器预览。选择要练习的安装器：</p>' +
+        '<p class="desc">按官方安装器的真实页序练习：Sublime 为“选择安装位置 → 开始菜单文件夹 → 安装 → 完成”（没有欢迎/许可页）；VS Code 为“许可 → 位置 → 开始菜单 → 附加任务（勾选创建桌面快捷方式）→ 安装 → 完成”。随后创建桌面快捷方式、编辑 HTML、保存并在浏览器预览。选择要练习的安装器：</p>' +
         '<div class="sim-row"><button class="sim-btn primary" data-install-sim="sublime">Sublime Text 3 安装模拟</button>' +
         '<button class="sim-btn" data-install-sim="vscode">Visual Studio Code 安装模拟</button></div>' +
-        '<p class="desc" style="margin:8px 0 0">Sublime 版本会练习“开始菜单 → 打开文件所在位置 → 发送到桌面快捷方式”；VS Code 版本会在附加任务中勾选“创建桌面图标”。</p></div>';
+        '<p class="desc" style="margin:8px 0 0">模拟界面右侧可点“查看真实安装界面”，对照官方安装包截图。Sublime 版本会练习“开始菜单 → 打开文件所在位置 → 发送到桌面快捷方式”；VS Code 版本会在附加任务中勾选“创建桌面快捷方式”（默认未勾选）。</p></div>';
     }
     if (t.id === 2) {
       return '<div class="sim-panel"><h4>🔀 流程图练习</h4>' +

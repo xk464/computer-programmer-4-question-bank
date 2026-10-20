@@ -28,6 +28,10 @@
     <EmbeddedResource Include="web\assets\bank.js" LogicalName="web/assets/bank.js" />
     <EmbeddedResource Include="web\assets\favicon.png" LogicalName="web/assets/favicon.png" />
     <EmbeddedResource Include="web\sim-install.js" LogicalName="web/sim-install.js" />
+    <EmbeddedResource Include="sim-assets\sublime-dest.png" LogicalName="web/sim-assets/sublime-dest.png" />
+    <EmbeddedResource Include="sim-assets\vscode-license.png" LogicalName="web/sim-assets/vscode-license.png" />
+    <EmbeddedResource Include="sim-assets\vscode-tasks.png" LogicalName="web/sim-assets/vscode-tasks.png" />
+    <EmbeddedResource Include="sim-assets\vscode-ready.png" LogicalName="web/sim-assets/vscode-ready.png" />
     <EmbeddedResource Include="app.ico" LogicalName="app.ico" />
     <EmbeddedResource Include="tcc.zip" LogicalName="tcc.zip" />
     <EmbeddedResource Include="tcc-COPYING.txt" LogicalName="tcc-COPYING.txt" />
