@@ -1,0 +1,29 @@
+name: build-desktop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Publish desktop exe
+        shell: pwsh
+        run: |
+          dotnet publish desktop/TikuDesktop.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true -o out
+          Copy-Item out/TikuDesktop.exe out/Tiku-Desktop-1.0.0.exe
+      - name: Upload to release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload v1.0.0 out/Tiku-Desktop-1.0.0.exe --clobber
