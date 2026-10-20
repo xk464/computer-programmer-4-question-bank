@@ -78,6 +78,12 @@ const shot = await cd.send("Page.captureScreenshot", { format: "png" });
 wf("C:\\Users\\徐\\Desktop\\mc\\docs\\preview-desktop-app.png", Buffer.from(shot.data, "base64"));
 check("桌面版截图", true);
 
+// 重新加载后应跳到第 2 题，而不是停在已答过的第 1 题显示答案
+await cd.send("Page.navigate", { url });
+await sleep(1800);
+check("桌面版重载后不显示答案", (await evalJS(cd, "document.querySelectorAll('.explain').length")) === 0);
+check("桌面版重载后跳到未答题", (await evalJS(cd, "document.querySelector('.qindex').textContent")).includes("第 2 / 398"));
+
 const failed = checks.filter((c) => !c.pass);
 console.log(`\n===== RESULT: ${checks.length - failed.length}/${checks.length} passed =====`);
 process.exit(failed.length ? 1 : 0);

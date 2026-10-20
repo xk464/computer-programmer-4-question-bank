@@ -483,6 +483,13 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
 
   function typeAllowed(q, filter) { return filter === "all" || q.type === filter; }
 
+  function firstUnansweredIndex() {
+    for (let i = 0; i < view.ids.length; i++) {
+      if (!S.answers[view.ids[i]]) return i;
+    }
+    return 0;
+  }
+
   function buildPracticeIds() {
     let list = ALL.filter(q => typeAllowed(q, S.settings.filter));
     const kw = view.search.trim().toLowerCase();
@@ -520,7 +527,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
     else if (view.mode === "fav") view.ids = buildFavIds();
     else if (view.mode === "exam") view.ids = exam.ids.slice();
     else view.ids = [];
-    if (!keepIdx) view.idx = 0;
+    if (!keepIdx) view.idx = view.mode === "practice" ? firstUnansweredIndex() : 0;
     if (view.idx >= view.ids.length) view.idx = Math.max(0, view.ids.length - 1);
     renderAll();
   }
@@ -536,6 +543,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
     else if (mode === "exam") view.ids = exam.ids.slice();
     else view.ids = [];
     view.idx = 0;
+    if (mode === "practice") view.idx = firstUnansweredIndex();
     document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
     const showToolbar = mode === "practice" || mode === "wrong" || mode === "fav";
     $("#toolbar").style.display = showToolbar ? "" : "none";
@@ -973,7 +981,9 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
   function restoreExam() {
     const e = S.exam;
     if (!e || !e.ids || !e.ids.length) return false;
-    exam.active = true; exam.submitted = !!e.submitted; exam.ids = e.ids.slice();
+    // 已交卷的考试不再自动回放答案，避免打开软件就看到正确答案
+    if (e.submitted) { S.exam = null; save(); return false; }
+    exam.active = true; exam.submitted = false; exam.ids = e.ids.slice();
     exam.answers = e.answers || {}; exam.start = e.start || Date.now();
     exam.filter = e.filter || "all"; exam.count = e.count || e.ids.length;
     view.mode = "exam"; view.ids = exam.ids.slice(); view.idx = 0;
@@ -1179,9 +1189,16 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
   $("#themeBtn").textContent = S.settings.theme === "dark" ? "☀" : "☾";
   if (restoreExam()) {
     renderAll();
-    setTimeout(() => toast(exam.submitted ? "已恢复上次考试结果" : "已恢复未完成的考试"), 400);
+    setTimeout(() => toast("已恢复未完成的考试"), 400);
   } else {
     rebuild();
+    if (view.mode === "practice") {
+      if (view.idx > 0) {
+        setTimeout(() => toast("已继续上次进度：第 " + (view.idx + 1) + " 题"), 400);
+      } else if (Object.keys(S.answers).length) {
+        setTimeout(() => toast("全部题目已作答，可点“重做本题”复习"), 500);
+      }
+    }
   }
 })();
 </script>

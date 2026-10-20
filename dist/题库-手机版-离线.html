@@ -304,11 +304,19 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
       const p = ids.indexOf(oldId);
       idx = p >= 0 ? p : Math.min(idx, Math.max(0, ids.length - 1));
     } else {
-      idx = Math.min(idx, Math.max(0, ids.length - 1));
+      idx = firstUnansweredIndex();
+      if (!ids.length) idx = 0;
     }
   }
 
   function current() { return BY_ID.get(ids[idx]); }
+
+  function firstUnansweredIndex() {
+    for (let i = 0; i < ids.length; i++) {
+      if (!S.answers[ids[i]]) return i;
+    }
+    return 0;
+  }
 
   function answerOf(q) { return S.answers[q.id]; }
 
@@ -473,14 +481,13 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
     if (!b) return;
     S.settings.filter = b.dataset.filter;
     save();
-    idx = 0;
     buildList(false);
     render(true);
     renderSheet();
   });
   $("#shuffleSwitch").addEventListener("click", () => {
     S.settings.shuffle = !S.settings.shuffle;
-    save(); idx = 0; buildList(false); render(true); renderSheet();
+    save(); buildList(false); render(true); renderSheet();
     toast(S.settings.shuffle ? "已开启随机顺序" : "已恢复顺序");
   });
   $("#themeSwitch").addEventListener("click", () => {
@@ -541,6 +548,11 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
   document.getElementById("totalCount").textContent = ALL.length;
   buildList(false);
   render(true);
+  if (idx > 0) {
+    setTimeout(() => toast("已继续上次进度：第 " + (idx + 1) + " 题"), 500);
+  } else if (Object.keys(S.answers).length) {
+    setTimeout(() => toast("全部题目已作答"), 600);
+  }
 
   window.addEventListener("resize", () => { if (sheetOpen) renderSheet(); });
 })();

@@ -160,10 +160,11 @@ try {
       { name: "prefers-reduced-motion", value: "reduce" },
       { name: "prefers-color-scheme", value: "light" }
     ]
-  }, async (cd) => {
+  }, async (cd, { nav }) => {
     const overflow = await evalJS(cd, "document.documentElement.scrollWidth - window.innerWidth");
     check("PC 无横向溢出", overflow <= 1, "delta=" + overflow);
     check("PC 题干渲染", (await text(cd, ".qtext")).includes("程序设计语言"));
+    check("PC 首题不预显示答案", (await evalJS(cd, "document.querySelectorAll('.explain').length")) === 0);
     const optCount = await evalJS(cd, "document.querySelectorAll('.option').length");
     check("PC 首页 4 个选项", optCount === 4, "count=" + optCount);
     check("PC 侧边答题卡 398", (await evalJS(cd, "document.querySelectorAll('.gbtn').length")) === 398);
@@ -215,6 +216,12 @@ try {
     await evalJS(cd, "document.querySelector('[data-close]').click()");
     await sleep(150);
 
+    // 重新加载：不回放已交卷考试，也不停在已答过的第 1 题
+    await nav();
+    check("PC 重载后不显示答案", (await evalJS(cd, "document.querySelectorAll('.explain').length")) === 0);
+    check("PC 重载后跳到未答题", (await text(cd, ".qindex")).includes("第 2 / 398"));
+    check("PC 已交卷考试不回放", (await evalJS(cd, "document.querySelector('[data-mode=practice]').classList.contains('active') && !document.querySelector('[data-mode=exam]').classList.contains('active')")));
+
     // 实操资料
     await evalJS(cd, "document.querySelector('[data-mode=docs]').click()");
     await sleep(200);
@@ -261,6 +268,7 @@ try {
     const overflow = await evalJS(cd, "document.documentElement.scrollWidth - window.innerWidth");
     check("手机版无横向溢出", overflow <= 1, "delta=" + overflow);
     check("手机版题干渲染", (await text(cd, ".qtext")).includes("程序设计语言"));
+    check("手机版首题不预显示答案", (await evalJS(cd, "document.querySelectorAll('.explain').length")) === 0);
     check("手机版 4 个选项", (await evalJS(cd, "document.querySelectorAll('.option').length")) === 4);
     const footRect = await evalJS(cd, "(()=>{const r=document.querySelector('#gridBtn').getBoundingClientRect();return {l:r.left,r:r.right,w:innerWidth}})()");
     check("手机版底部按钮在视口内", footRect.l >= 0 && footRect.r <= footRect.w + 1, JSON.stringify(footRect));
@@ -306,6 +314,8 @@ try {
     // 刷新后持久化
     await nav();
     check("手机版刷新后记录保留", (await text(cd, "#answeredCount")) === "1", await text(cd, "#answeredCount"));
+    check("手机版刷新后定位未答题", (await text(cd, "#posText")).startsWith("2 /"), await text(cd, "#posText"));
+    check("手机版刷新后不显示答案", (await evalJS(cd, "document.querySelectorAll('.explain').length")) === 0);
   });
   check("手机版无 JS 报错", mobErrors.length === 0, mobErrors.join(" | "));
 
