@@ -1,0 +1,8 @@
+本程序内置 TinyCC 0.9.27（x86_64 Windows 版本），用于在 Windows 桌面版本地编译、运行实操题中的 C 语言代码。
+
+TinyCC 由 Fabrice Bellard 开发，采用 GNU LGPL 2.1 许可。
+项目主页：https://bellard.org/tcc/
+源码与二进制下载：https://download.savannah.gnu.org/releases/tinycc/
+许可证全文见同目录下的 tcc-COPYING.txt，或 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+
+内置的 tcc.zip 仅包含运行编译器所需的 tcc.exe、libtcc.dll、include 与 lib 等文件。

@@ -7,7 +7,7 @@ src = open(os.path.join(ROOT, "pc", "index.html"), encoding="utf-8").read()
 src = src.replace('<link rel="icon" type="image/png" href="../assets/favicon.png">',
                   '<link rel="icon" type="image/png" href="assets/favicon.png">')
 src = src.replace('<script src="../assets/bank.js"></script>',
-                  '<script src="assets/bank.js"></script>')
+                  '<script>window.__DESKTOP_APP__ = true;</script>\n<script src="assets/bank.js"></script>')
 
 # 桌面端不需要跳转到手机版/首页的链接
 src = src.replace('      <a class="ghost-link" href="../mobile/" title="手机版（仅选择题）">手机版</a>\n', '')

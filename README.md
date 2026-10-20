@@ -6,7 +6,7 @@
 
 | 版本 | 获取方式 | 特点 |
 | --- | --- | --- |
-| Windows 桌面版 | [Tiku-Desktop-1.0.0.exe](https://github.com/xk464/computer-programmer-4-question-bank/releases/download/v1.0.0/Tiku-Desktop-1.0.0.exe) | 双击运行，自包含 .NET 运行时；本地判分、模拟考试、错题本、收藏、搜索、实操资料 |
+| Windows 桌面版 | [Tiku-Desktop-1.0.0.exe](https://github.com/xk464/computer-programmer-4-question-bank/releases/download/v1.0.0/Tiku-Desktop-1.0.0.exe) | 双击运行，自包含 .NET 运行时；本地判分、模拟考试、错题本、收藏、搜索、5 个互动实操、F11 全屏 |
 | Android 手机版 | [Tiku-Android-1.0.0.apk](https://github.com/xk464/computer-programmer-4-question-bank/releases/download/v1.0.0/Tiku-Android-1.0.0.apk) | **只有选择题**，大按钮点选即判、滑动切题、答题卡，完全离线且不申请网络权限 |
 | 电脑网页版 | [`pc/index.html`](pc/index.html) | 免安装，浏览器直接打开，功能与桌面版一致 |
 | 手机网页版 | [`mobile/index.html`](mobile/index.html) | PWA，可「添加到主屏幕」离线使用 |
@@ -33,7 +33,7 @@
 - **模拟考试**：随机组卷（20 / 50 / 100 / 全部），计时、交卷判分、成绩记录，错题自动入错题本。
 - **错题本**：按错误次数归集，答对自动移除，可导出 TXT。
 - **收藏与搜索**：星标重点题，按题干 / 选项 / 解析全文检索。
-- **实操资料**：5 个实操考核要点，含 Sublime Text / VS Code 环境搭建、流程图、C 语言填空与递归题、详细设计说明。
+- **实操模拟（桌面版）**：模拟 Windows 桌面完成 Sublime/VSCode 安装与 Hello World、流程图拖拽检查、C 填空/编程本地编译运行、详细设计填空。内置 TinyCC，代码只在本机编译执行；F11 或右上角按钮全屏。
 - **完全离线**：无后端、无登录、无广告；答题记录保存在浏览器 `localStorage`，不上传任何数据。
 - **PWA**：手机版支持「添加到主屏幕」，首次打开后可断网使用。
 
@@ -57,7 +57,7 @@
 │   └── practical.json      # 实操资料
 ├── source/                 # 原始文件（Excel / Word）
 ├── dist/                   # 离线单文件版本
-├── desktop/                # Windows 桌面版（.NET 8 + WebView2）
+├── desktop/                # Windows 桌面版（.NET 8 + WebView2 + 内置 TinyCC）
 ├── android/                # Android 原生壳（WebView 加载内置题库）
 ├── docs/                   # 预览图
 ├── release/                # 构建产物（exe / apk，不提交）
@@ -94,7 +94,9 @@ dotnet publish desktop/TikuDesktop.csproj -c Release -r win-x64 --self-contained
   -p:EnableCompressionInSingleFile=true -o release/desktop
 ```
 
-产物 `release/desktop/TikuDesktop.exe` 为单文件自包含程序（约 64 MB），目标机器需要 WebView2 运行时。程序优先把题库与答题记录写入 `%LOCALAPPDATA%\ComputerProgrammer4Tiku`，若该目录不可写会自动回退到 exe 同级的 `TikuData`，也可用环境变量 `TIKU_DATA_DIR` 指定。
+产物 `release/desktop/TikuDesktop.exe` 为单文件自包含程序（约 65 MB），目标机器需要 WebView2 运行时。程序优先把题库与答题记录写入 `%LOCALAPPDATA%\ComputerProgrammer4Tiku`，若该目录不可写会自动回退到 exe 同级的 `TikuData`，也可用环境变量 `TIKU_DATA_DIR` 指定。
+
+桌面版内置 TinyCC 0.9.27 用于本地编译 C 代码（LGPL 2.1），打包在 `desktop/tcc.zip`，许可证见 `desktop/tcc-COPYING.txt`。
 
 ## 构建 Android APK
 

@@ -1,5 +1,8 @@
+using System.Diagnostics;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
@@ -32,9 +35,14 @@ internal static class Program
 public sealed class MainForm : Form
 {
     private const string AppId = "ComputerProgrammer4Tiku";
+    private const string TccVersion = "0.9.27";
     private readonly WebView2 _web = new() { Dock = DockStyle.Fill };
     private readonly string _dataRoot;
     private string _webRoot = "";
+    private bool _fullscreen;
+    private Rectangle _prevBounds;
+    private FormWindowState _prevState;
+    private FormBorderStyle _prevBorder;
 
     public MainForm()
     {
@@ -64,7 +72,8 @@ public sealed class MainForm : Form
             Program.Log("InitAsync start");
             _webRoot = Path.Combine(_dataRoot, "web");
             ExtractWebAssets(_webRoot);
-            Program.Log("assets extracted to " + _webRoot);
+            ExtractTcc();
+            Program.Log("assets and tcc ready");
 
             var userData = Path.Combine(_dataRoot, "WebView2");
             Directory.CreateDirectory(userData);
@@ -82,6 +91,7 @@ public sealed class MainForm : Form
             core.Settings.AreDefaultContextMenusEnabled = true;
             core.Settings.IsZoomControlEnabled = false;
             core.NewWindowRequested += OnNewWindowRequested;
+            core.WebMessageReceived += OnWebMessageReceived;
             core.Navigate("https://app.local/index.html");
             Program.Log("navigate issued");
         }
@@ -133,13 +143,190 @@ public sealed class MainForm : Form
 
     private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
     {
-        // 外部链接（如 GitHub）交给系统浏览器打开
         e.Handled = true;
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(e.Uri) { UseShellExecute = true });
         }
         catch { }
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData == Keys.F11)
+        {
+            ToggleFullscreen();
+            return true;
+        }
+        if (keyData == Keys.Escape && _fullscreen)
+        {
+            ToggleFullscreen();
+            return true;
+        }
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    private void ToggleFullscreen()
+    {
+        if (!_fullscreen)
+        {
+            _prevBounds = Bounds;
+            _prevState = WindowState;
+            _prevBorder = FormBorderStyle;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            WindowState = FormWindowState.Normal;
+            TopMost = true;
+            Bounds = Screen.FromControl(this).Bounds;
+            _fullscreen = true;
+        }
+        else
+        {
+            TopMost = false;
+            FormBorderStyle = _prevBorder;
+            Bounds = _prevBounds;
+            WindowState = _prevState;
+            _fullscreen = false;
+        }
+    }
+
+    private async void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(e.WebMessageAsJson);
+            var root = doc.RootElement;
+            if (!root.TryGetProperty("type", out var typeEl)) return;
+            var type = typeEl.GetString();
+
+            if (type == "toggle-fullscreen")
+            {
+                ToggleFullscreen();
+                return;
+            }
+
+            if (type == "exit-fullscreen")
+            {
+                if (_fullscreen) ToggleFullscreen();
+                return;
+            }
+
+            if (type == "run-c")
+            {
+                var id = root.TryGetProperty("id", out var idEl) ? idEl.GetString() : "";
+                var code = root.TryGetProperty("code", out var codeEl) ? codeEl.GetString() ?? "" : "";
+                var stdin = root.TryGetProperty("stdin", out var inEl) ? inEl.GetString() ?? "" : "";
+                var result = await RunCAsync(code, stdin);
+                var payload = JsonSerializer.Serialize(new
+                {
+                    type = "run-c-result",
+                    id,
+                    ok = result.ok,
+                    output = result.output,
+                    error = result.error,
+                    timedOut = result.timedOut
+                });
+                _web.CoreWebView2?.PostWebMessageAsJson(payload);
+            }
+        }
+        catch (Exception ex)
+        {
+            Program.Log("web message failed: " + ex);
+        }
+    }
+
+    private async Task<(bool ok, string output, string error, bool timedOut)> RunCAsync(string code, string stdin)
+    {
+        if (code.Length > 100_000) return (false, "", "代码过长（上限 100 KB）。", false);
+        var tccExe = Path.Combine(_dataRoot, "tcc", "tcc.exe");
+        if (!File.Exists(tccExe)) return (false, "", "内置 C 编译器未找到，请重新安装桌面版。", false);
+
+        var dir = Path.Combine(_dataRoot, "runs", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var src = Path.Combine(dir, "main.c");
+            var exe = Path.Combine(dir, "main.exe");
+            await File.WriteAllTextAsync(src, code, new UTF8Encoding(false));
+
+            var compile = await RunProcessAsync(tccExe, new[] { "-w", "-o", exe, src }, dir, "", 15000);
+            if (compile.timedOut) return (false, "", "编译超时。", true);
+            if (compile.exitCode != 0 || !File.Exists(exe))
+            {
+                var message = (compile.stderr + "\n" + compile.stdout).Trim();
+                return (false, "", Truncate(string.IsNullOrWhiteSpace(message) ? "编译失败。" : message, 8000), false);
+            }
+
+            var run = await RunProcessAsync(exe, Array.Empty<string>(), dir, stdin, 5000);
+            var output = run.stdout;
+            if (!string.IsNullOrWhiteSpace(run.stderr)) output += (output.Length > 0 ? "\n" : "") + run.stderr;
+            if (run.timedOut) output += (output.Length > 0 ? "\n" : "") + "[运行超过 5 秒，已终止]";
+            return (true, Truncate(output, 20000), "", run.timedOut);
+        }
+        catch (Exception ex)
+        {
+            return (false, "", "运行失败：" + ex.Message, false);
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    private static async Task<(int exitCode, string stdout, string stderr, bool timedOut)> RunProcessAsync(
+        string file, string[] args, string workingDir, string stdin, int timeoutMs)
+    {
+        var psi = new ProcessStartInfo(file)
+        {
+            WorkingDirectory = workingDir,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            StandardOutputEncoding = Encoding.UTF8,
+            StandardErrorEncoding = Encoding.UTF8,
+        };
+        foreach (var arg in args) psi.ArgumentList.Add(arg);
+
+        using var process = new Process { StartInfo = psi };
+        process.Start();
+
+        try
+        {
+            if (!string.IsNullOrEmpty(stdin))
+            {
+                await process.StandardInput.WriteAsync(stdin);
+            }
+            process.StandardInput.Close();
+        }
+        catch { }
+
+        var outTask = process.StandardOutput.ReadToEndAsync();
+        var errTask = process.StandardError.ReadToEndAsync();
+        var waitTask = process.WaitForExitAsync();
+        var finished = await Task.WhenAny(waitTask, Task.Delay(timeoutMs));
+        var timedOut = finished != waitTask;
+
+        if (timedOut)
+        {
+            try { process.Kill(entireProcessTree: true); } catch { }
+        }
+        else
+        {
+            await waitTask;
+        }
+
+        var stdout = "";
+        var stderr = "";
+        try { stdout = await outTask; } catch { }
+        try { stderr = await errTask; } catch { }
+        return (timedOut ? -1 : process.ExitCode, stdout, stderr, timedOut);
+    }
+
+    private static string Truncate(string text, int max)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= max) return text ?? "";
+        return text.Substring(0, max) + "\n…（输出过长，已截断）";
     }
 
     private static void ExtractWebAssets(string webRoot)
@@ -161,6 +348,34 @@ public sealed class MainForm : Form
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             using var file = File.Create(target);
             stream.CopyTo(file);
+        }
+    }
+
+    private void ExtractTcc()
+    {
+        var tccRoot = Path.Combine(_dataRoot, "tcc");
+        var stamp = Path.Combine(tccRoot, ".version");
+        if (File.Exists(Path.Combine(tccRoot, "tcc.exe")) && File.Exists(stamp)
+            && File.ReadAllText(stamp).Trim() == TccVersion)
+        {
+            return;
+        }
+
+        try
+        {
+            if (Directory.Exists(tccRoot)) Directory.Delete(tccRoot, true);
+            Directory.CreateDirectory(_dataRoot);
+            var asm = Assembly.GetExecutingAssembly();
+            using var stream = asm.GetManifestResourceStream("tcc.zip")
+                ?? throw new InvalidOperationException("缺少内置 C 编译器");
+            using var zip = new ZipArchive(stream, ZipArchiveMode.Read);
+            zip.ExtractToDirectory(_dataRoot, true);
+            File.WriteAllText(stamp, TccVersion);
+            Program.Log("tcc extracted");
+        }
+        catch (Exception ex)
+        {
+            Program.Log("tcc extract failed: " + ex);
         }
     }
 }

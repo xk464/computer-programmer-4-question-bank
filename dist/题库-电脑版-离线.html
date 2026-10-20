@@ -296,6 +296,83 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
 .toast{background:var(--text);color:var(--surface);padding:9px 16px;border-radius:10px;font-size:13px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);animation:toastIn .2s ease}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
+/* ---------- 实操互动 / 模拟 ---------- */
+.sim-banner{display:flex;gap:10px;align-items:flex-start;background:var(--primary-weak);border:1px solid var(--primary-border);border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:13px;line-height:1.65}
+.sim-banner b{color:var(--primary)}
+.sim-panel{margin-top:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);padding:14px 15px}
+.sim-panel h4{margin:0 0 8px;font-size:13px;color:var(--primary);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sim-panel p.desc{margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.6}
+.sim-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:9px;padding:7px 13px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.sim-btn:hover{border-color:var(--primary-border);background:var(--primary-weak);color:var(--primary)}
+.sim-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.sim-btn.primary:hover{background:var(--primary-hover);color:#fff}
+.sim-btn[disabled]{opacity:.55;cursor:not-allowed}
+.sim-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sim-status{font-size:12px;color:var(--muted)}
+.sim-status.ok{color:var(--success)}
+.sim-status.bad{color:var(--danger)}
+.code-editor{width:100%;min-height:250px;border-radius:10px;border:1px solid #22304a;background:#0d1524;color:#dbe6ff;font-family:var(--mono);font-size:12.5px;line-height:1.65;padding:12px;resize:vertical;tab-size:4;white-space:pre;overflow:auto}
+.code-editor:focus{outline:2px solid var(--primary);outline-offset:1px}
+.code-stdin{width:100%;min-height:52px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 10px;resize:vertical}
+.code-output{margin:0;min-height:64px;max-height:260px;overflow:auto;border-radius:10px;background:#0d1524;color:#cfe0ff;border:1px solid #22304a;padding:10px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.code-output.err{color:#ffb4b4;border-color:#633034}
+.code-label{font-size:11.5px;color:var(--muted);margin:9px 0 4px}
+.flow-builder{display:flex;flex-direction:column;gap:8px}
+.flow-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.flow-item{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:13px}
+.flow-item .grip{color:var(--muted-2);cursor:grab;font-size:14px}
+.flow-item .label{flex:1}
+.flow-item .moves{display:flex;gap:3px}
+.flow-item .moves button{border:1px solid var(--border);background:var(--surface-2);border-radius:6px;width:24px;height:24px;font-size:11px;color:var(--muted);line-height:1}
+.flow-arrow{text-align:center;color:var(--muted-2);font-size:12px;line-height:1;margin:-2px 0}
+.flow-branch{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px;margin:6px 0 2px;padding:8px 10px;border-left:2px dashed var(--border-strong)}
+.flow-branch select{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:7px;padding:5px 8px;font-size:12px}
+.design-list{display:grid;gap:12px}
+.design-item label{display:block;font-size:12.5px;font-weight:600;margin-bottom:4px}
+.design-item textarea{width:100%;min-height:58px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:8px 10px;font-size:12.5px;line-height:1.55;resize:vertical}
+.design-feedback{font-size:12px;color:var(--muted);margin-top:3px;min-height:16px}
+.design-feedback.ok{color:var(--success)}
+.design-feedback.bad{color:var(--danger)}
+.sim-answer{margin-top:10px;padding:10px 12px;border-left:3px solid var(--success);background:var(--success-weak);border-radius:8px;font-size:12.5px;line-height:1.7;white-space:pre-wrap}
+
+/* 模拟桌面 */
+.sim-overlay{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;background:#08101f;color:#e8eef9;font-family:var(--font)}
+.sim-desk{position:relative;flex:1;background:radial-gradient(900px 500px at 70% 10%,#2452a8 0%,#142a52 45%,#081326 100%);overflow:auto}
+.sim-icons{position:absolute;top:18px;left:18px;display:flex;flex-direction:column;gap:14px;z-index:2}
+.sim-icon{width:92px;border:0;background:transparent;color:#fff;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;line-height:1.3;text-align:center;padding:6px 4px;border-radius:8px;cursor:pointer}
+.sim-icon:hover{background:rgba(255,255,255,.12)}
+.sim-icon .glyph{font-size:32px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.sim-win{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(700px,88%);border-radius:11px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.65);background:#f3f6fb;color:#14203a;z-index:5}
+.sim-win.dark{background:#1b1b1b;color:#e8e8e8}
+.sim-win-head{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#e3e9f5;font-size:12px;font-weight:700}
+.sim-win.dark .sim-win-head{background:#2c2c2c;color:#eee}
+.sim-win-body{padding:18px 20px;max-height:58vh;overflow:auto}
+.sim-win-body h3{margin:0 0 8px;font-size:17px}
+.sim-win-body p{margin:0 0 12px;font-size:13px;line-height:1.7;color:#4a5a74}
+.sim-win.dark .sim-win-body p{color:#bbb}
+.sim-wactions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.sim-wactions .sim-btn{background:#fff;color:#1a2740;border-color:#c9d4e8}
+.sim-wactions .sim-btn.primary{background:#4a63e7;border-color:#4a63e7;color:#fff}
+.sim-taskbar{height:46px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;background:#070d18;border-top:1px solid #1c2a45;font-size:12px;color:#b9c8e4}
+.sim-tip{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);max-width:82%;background:rgba(6,14,28,.9);border:1px solid #35507e;color:#dbe6ff;padding:9px 15px;border-radius:10px;font-size:12.5px;line-height:1.55;text-align:center;z-index:3}
+.sim-steps{position:absolute;right:18px;top:18px;width:270px;background:rgba(5,12,24,.86);border:1px solid rgba(110,145,215,.35);border-radius:12px;padding:12px 15px;font-size:12px;color:#b9c8e4;z-index:2}
+.sim-steps h4{margin:0 0 8px;font-size:13px;color:#fff}
+.sim-steps ul{margin:0;padding:0;list-style:none}
+.sim-steps li{position:relative;padding-left:17px;margin:6px 0;line-height:1.5}
+.sim-steps li::before{content:"○";position:absolute;left:0;color:#5f7bff}
+.sim-steps li.done{color:#8fd6b0}
+.sim-steps li.done::before{content:"✓";color:#3ecf8e}
+.sim-steps li.cur{color:#fff;font-weight:700}
+.sim-steps li.cur::before{content:"●";color:#8fa8ff}
+.sim-close{position:absolute;right:18px;bottom:18px;z-index:6;background:rgba(8,16,30,.9);border:1px solid #35507e;color:#dbe6ff;border-radius:9px;padding:7px 12px;font-size:12px}
+.sim-close:hover{background:#16294a}
+.sim-editor{width:100%;min-height:220px;background:#1e1e1e;color:#d4d4d4;border:1px solid #333;border-radius:6px;padding:10px;font-family:var(--mono);font-size:12.5px;line-height:1.6;resize:vertical;white-space:pre;tab-size:4}
+.sim-editor-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.sim-editor-bar .lang{margin-left:auto;border:1px solid #555;background:#2d2d2d;color:#ddd;border-radius:5px;padding:4px 9px;font-size:11.5px}
+.sim-progress{height:10px;background:#dde5f2;border-radius:6px;overflow:hidden}
+.sim-progress i{display:block;height:100%;width:0;background:#4a63e7;transition:width .8s ease}
+.sim-preview{width:100%;height:240px;border:1px solid #cfd8e8;border-radius:8px;background:#fff}
+
 /* ---------- responsive ---------- */
 @media (max-width:1080px){
   main{grid-template-columns:1fr;padding:18px 16px 48px}
@@ -336,6 +413,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px 
 
     <div class="top-right">
       <div class="mini-stat" id="miniStat">已答 <b>0</b> 题<br>正确率 <b>—</b></div>
+      <button class="icon-btn" id="fsBtn" title="全屏 / 退出全屏（F11）" aria-label="全屏">⛶</button>
       <button class="icon-btn" id="themeBtn" title="切换深色/浅色" aria-label="切换主题">☾</button>
       <a class="ghost-link" href="https://xk464.github.io/computer-programmer-4-question-bank/mobile/" title="手机版（仅选择题）">手机版</a>
       <a class="ghost-link" href="https://xk464.github.io/computer-programmer-4-question-bank/" title="返回首页">首页</a>
@@ -415,6 +493,8 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
   const JUDGE_KEYS = ["Y", "N"];
   const TYPE_NAME = { single: "单选题", judge: "判断题" };
   const KEY = "mc_tiku_pc_v1";
+  const IS_DESKTOP = !!window.__DESKTOP_APP__;
+  const NATIVE = !!(window.chrome && window.chrome.webview);
 
   /* ---------------- store ---------------- */
   const DEFAULT_STORE = {
@@ -1020,7 +1100,11 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
   /* ---------------- docs ---------------- */
   function renderDocs() {
     const p = BANK.practical || { tasks: [] };
+    const banner = IS_DESKTOP
+      ? '<div class="sim-banner"><span>🧪</span><span><b>桌面版实操模拟</b>：安装题在模拟桌面中完成；C 语言题可在本机编译运行并查看结果；流程图和详细设计也可以边做边检查。全部离线运行。</span></div>'
+      : '<div class="offline-note" style="margin-bottom:14px"><span>💡</span><span>模拟桌面、C 代码本地运行等互动实操在 Windows 桌面版中提供；本页保留文字步骤与参考答案。</span></div>';
     return '<div class="docs-head"><h2>' + esc(p.title || "实操资料") + '</h2><p>' + esc(p.subtitle || "") + '</p></div>' +
+      banner +
       PRACTICAL.map((t, i) => taskHtml(t, i)).join("") +
       (PRACTICAL.length ? '<div class="offline-note" style="margin-top:6px"><span>ℹ</span><span>' + esc(p.note || "") + '</span></div>' : "");
   }
@@ -1048,7 +1132,8 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
       body += t.groups.map(g => '<div class="group-card"><h4>' + esc(g.name) + '</h4><ul>' + g.lines.map(l => '<li>' + esc(l) + '</li>').join("") + '</ul></div>').join("");
     }
     if (t.note) body += '<div class="note">' + esc(t.note) + '</div>';
-    return '<section class="task" id="task-' + i + '"><div class="task-head"><div class="task-no">' + (i + 1) + '</div><div><h3>' + esc(t.title) + '</h3></div></div>' + body + '</section>';
+    const interactive = IS_DESKTOP ? interactiveDocsHtml(t) : "";
+    return '<section class="task" id="task-' + i + '"><div class="task-head"><div class="task-no">' + (i + 1) + '</div><div><h3>' + esc(t.title) + '</h3></div></div>' + body + interactive + '</section>';
   }
 
   function codeBox(code) {
@@ -1060,6 +1145,7 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
       const pre = btn.closest(".code-box").querySelector("pre");
       copyText(pre.innerText);
     }));
+    if (IS_DESKTOP) bindInteractiveDocs();
   }
 
   function copyText(text) {
@@ -1074,6 +1160,653 @@ window.QBANK = {"meta":{"title":"计算机程序设计员（四级）题库","to
     document.body.appendChild(ta); ta.select();
     try { document.execCommand("copy"); done(); } catch (e) { toast("复制失败，请手动选择"); }
     ta.remove();
+  }
+
+  /* ---------------- 实操互动（桌面版） ---------------- */
+  const HTML_TEMPLATE = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+<body>
+
+</body>
+</html>`;
+
+  const C_TASK3_STARTER = String.raw`#include <stdio.h>
+
+int main(void)
+{
+    char str1[80], str2[80];
+    int n, i;
+
+    printf("请输入字符串:\n");
+    gets(str1);
+    printf("请输入要截取子串的位置：");
+    scanf(__BLANK1__);
+
+    for (i = 0; i < n; i++)
+        str2[i] = __BLANK2__;
+
+    str2[i] = '\0';
+    printf("新字符串是:%s\n", __BLANK3__);
+    return 0;
+}
+`;
+
+  const C_TASK3_ANSWER = String.raw`#include <stdio.h>
+
+int main(void)
+{
+    char str1[80], str2[80];
+    int n, i;
+
+    printf("请输入字符串:\n");
+    gets(str1);
+    printf("请输入要截取子串的位置：");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+        str2[i] = str1[i];
+
+    str2[i] = '\0';
+    printf("新字符串是:%s\n", str2);
+    return 0;
+}
+`;
+
+  const C_TASK5_STARTER = String.raw`#include <stdio.h>
+
+void change(int n)
+{
+    /* TODO：n 等于 0 时返回；否则先递归 change(n / 2)，再输出 n % 2 */
+}
+
+int main(void)
+{
+    int num;
+    printf("请输入正整数：");
+    scanf("%d", &num);
+    printf("二进制结果：");
+    change(num);
+    printf("\n");
+    return 0;
+}
+`;
+
+  const C_TASK5_ANSWER = String.raw`#include <stdio.h>
+
+void change(int n)
+{
+    if (n == 0) return;
+    change(n / 2);
+    printf("%d", n % 2);
+}
+
+int main(void)
+{
+    int num;
+    printf("请输入正整数：");
+    scanf("%d", &num);
+    printf("二进制结果：");
+    change(num);
+    printf("\n");
+    return 0;
+}
+`;
+
+  const CODE_TASKS = {
+    c3: {
+      stdin: "abcdefg\n3\n",
+      expected: "新字符串是:abc",
+      starter: C_TASK3_STARTER,
+      answer: C_TASK3_ANSWER,
+      hint: "把 __BLANK1__、__BLANK2__、__BLANK3__ 换成正确代码再运行。"
+    },
+    c5: {
+      stdin: "10\n",
+      expected: "二进制结果：1010",
+      starter: C_TASK5_STARTER,
+      answer: C_TASK5_ANSWER,
+      hint: "补全 change 函数的递归逻辑，再运行。"
+    }
+  };
+
+  const nativeC = { seq: 0, pending: new Map() };
+  if (NATIVE) {
+    window.chrome.webview.addEventListener("message", (ev) => {
+      let data = ev.data;
+      if (typeof data === "string") { try { data = JSON.parse(data); } catch { return; } }
+      if (!data || data.type !== "run-c-result") return;
+      const pending = nativeC.pending.get(data.id);
+      if (!pending) return;
+      nativeC.pending.delete(data.id);
+      pending.resolve(data);
+    });
+  }
+  function runNativeC(code, stdin) {
+    return new Promise((resolve, reject) => {
+      if (!NATIVE) { reject(new Error("当前页面不支持本地编译，请使用 Windows 桌面版。")); return; }
+      const id = "c" + (++nativeC.seq);
+      nativeC.pending.set(id, { resolve });
+      try {
+        window.chrome.webview.postMessage({ type: "run-c", id, code, stdin });
+      } catch (e) {
+        nativeC.pending.delete(id);
+        reject(e);
+        return;
+      }
+      setTimeout(() => {
+        if (nativeC.pending.has(id)) {
+          nativeC.pending.delete(id);
+          reject(new Error("运行超时，请检查程序是否有死循环。"));
+        }
+      }, 30000);
+    });
+  }
+
+  function toggleFullscreen() {
+    if (NATIVE) {
+      window.chrome.webview.postMessage({ type: "toggle-fullscreen" });
+      return;
+    }
+    if (!document.fullscreenElement) {
+      const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+      if (p && p.catch) p.catch(() => toast("当前浏览器不支持全屏"));
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+  const fsBtn = $("#fsBtn");
+  if (fsBtn) fsBtn.addEventListener("click", toggleFullscreen);
+
+  // WebView2 内按 F11 时交给原生窗口处理；浏览器里 F11 仍由浏览器接管
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "F11" && NATIVE) {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+    if (e.key === "Escape" && NATIVE) {
+      window.chrome.webview.postMessage({ type: "exit-fullscreen" });
+    }
+  });
+
+  function interactiveDocsHtml(t) {
+    if (t.id === 1) {
+      return '<div class="sim-panel"><h4>🖥 安装模拟 · 模拟桌面</h4>' +
+        '<p class="desc">在模拟的 Windows 桌面里双击安装包、完成安装、打开编辑器、把语言改成 HTML、输入 hello world、保存并预览。步骤会自动检查。</p>' +
+        '<div class="sim-row"><button class="sim-btn primary" data-install-sim>启动安装模拟</button><span class="sim-status">无需真实安装，随时可退出</span></div></div>';
+    }
+    if (t.id === 2) {
+      return '<div class="sim-panel"><h4>🔀 流程图练习</h4>' +
+        '<p class="desc">调整四个步骤的顺序，并设置判断框“是/否”分别走向哪个输出。</p>' + flowSimHtml() + '</div>';
+    }
+    if (t.id === 3) {
+      return codePanelHtml("c3", "⌨️ C 填空 · 本地编译运行", "在本机编译运行，看到真实输出；三个 __BLANK__ 是待填空。");
+    }
+    if (t.id === 4) {
+      return '<div class="sim-panel"><h4>📝 详细设计填空</h4>' +
+        '<p class="desc">补充各模块的功能、输入与输出项目，系统会按关键词检查。</p>' + designSimHtml() + '</div>';
+    }
+    if (t.id === 5) {
+      return codePanelHtml("c5", "⌨️ C 编程 · 本地编译运行", "补全递归函数后在本机编译运行，验证二进制转换结果。");
+    }
+    return "";
+  }
+
+  function codePanelHtml(taskId, title, desc) {
+    const cfg = CODE_TASKS[taskId];
+    if (!cfg) return "";
+    return '<div class="sim-panel code-sim" data-code-task="' + taskId + '">' +
+      '<h4>' + title + '</h4>' +
+      '<p class="desc">' + esc(desc) + ' 代码只在本机编译，不会上传。</p>' +
+      '<div class="sim-row" style="margin-bottom:6px">' +
+        '<button class="sim-btn primary" data-code-run>▶ 运行</button>' +
+        '<button class="sim-btn" data-code-answer>填入参考答案</button>' +
+        '<button class="sim-btn" data-code-reset>重置代码</button>' +
+        '<span class="sim-status" data-code-status>未运行</span>' +
+      '</div>' +
+      '<div class="code-label">代码（可编辑）</div>' +
+      '<textarea class="code-editor" data-code-editor spellcheck="false">' + esc(cfg.starter) + '</textarea>' +
+      '<div class="code-label">程序输入（每行一个）</div>' +
+      '<textarea class="code-stdin" data-code-stdin>' + esc(cfg.stdin) + '</textarea>' +
+      '<div class="code-label">运行输出</div>' +
+      '<pre class="code-output" data-code-output>点击“运行”在本机编译并执行</pre>' +
+      '<div class="code-label">预期输出包含：' + esc(cfg.expected) + '</div>' +
+      '</div>';
+  }
+
+  function flowSimHtml() {
+    const items = [
+      { key: "start", text: "开始" },
+      { key: "input", text: "输入 x" },
+      { key: "decision", text: "判断 x % 2 == 0？" },
+      { key: "end", text: "结束" }
+    ];
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    const lis = items.map((it, i) =>
+      '<li class="flow-item" draggable="true" data-key="' + it.key + '">' +
+        '<span class="grip">⠿</span><span class="label">' + esc(it.text) + '</span>' +
+        '<span class="moves"><button data-move="up" title="上移">↑</button><button data-move="down" title="下移">↓</button></span>' +
+      '</li>'
+    ).join("");
+    return '<div class="flow-builder" data-flow>' +
+      '<ul class="flow-list" data-flow-list>' + lis + '</ul>' +
+      '<div class="flow-branch">判断框：是 → <select data-flow-yes>' +
+        '<option value="even">输出“偶数”</option><option value="odd">输出“奇数”</option><option value="end">结束</option>' +
+      '</select> 否 → <select data-flow-no>' +
+        '<option value="even">输出“偶数”</option><option value="odd">输出“奇数”</option><option value="end">结束</option>' +
+      '</select></div>' +
+      '<div class="sim-row"><button class="sim-btn primary" data-flow-check>检查流程图</button>' +
+      '<button class="sim-btn" data-flow-reset>打乱重来</button><span class="sim-status" data-flow-result></span></div>' +
+      '</div>';
+  }
+
+  function designSimHtml() {
+    const items = [
+      { key: "d1", label: "1. 公寓信息管理模块的“功能”应包含哪些管理功能？" },
+      { key: "d2", label: "2. 公寓信息管理模块的“输入项目”有哪些？" },
+      { key: "d3", label: "3. 物品管理模块的“输出项目”有哪些？" },
+      { key: "d4", label: "4. 系部管理模块的“输出项目”有哪些？" }
+    ];
+    return '<div class="design-list" data-design>' +
+      items.map(it => '<div class="design-item"><label>' + esc(it.label) + '</label>' +
+        '<textarea data-design-input="' + it.key + '" placeholder="输入你的答案，多个项目用顿号或逗号分隔"></textarea>' +
+        '<div class="design-feedback" data-design-fb="' + it.key + '"></div></div>').join("") +
+      '<div class="sim-row"><button class="sim-btn primary" data-design-check>检查填空</button>' +
+      '<button class="sim-btn" data-design-answer>查看参考答案</button><span class="sim-status" data-design-result></span></div>' +
+      '<div class="sim-answer" data-design-answer-box hidden></div>' +
+      '</div>';
+  }
+
+  function bindInteractiveDocs() {
+    document.querySelectorAll("[data-install-sim]").forEach(btn => btn.addEventListener("click", openInstallSim));
+    bindFlowSim();
+    bindDesignSim();
+    bindCodeSims();
+  }
+
+  function bindCodeSims() {
+    document.querySelectorAll(".code-sim").forEach(panel => {
+      const taskId = panel.dataset.codeTask;
+      const cfg = CODE_TASKS[taskId];
+      if (!cfg) return;
+      const editor = panel.querySelector("[data-code-editor]");
+      const stdin = panel.querySelector("[data-code-stdin]");
+      const output = panel.querySelector("[data-code-output]");
+      const status = panel.querySelector("[data-code-status]");
+      const runBtn = panel.querySelector("[data-code-run]");
+
+      editor.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = editor.selectionStart;
+          const end = editor.selectionEnd;
+          editor.value = editor.value.slice(0, start) + "    " + editor.value.slice(end);
+          editor.selectionStart = editor.selectionEnd = start + 4;
+        }
+      });
+
+      panel.querySelector("[data-code-answer]").addEventListener("click", () => {
+        editor.value = cfg.answer;
+        status.textContent = "已填入参考答案";
+        status.className = "sim-status";
+        toast("已填入参考答案，点“运行”验证");
+      });
+      panel.querySelector("[data-code-reset]").addEventListener("click", () => {
+        editor.value = cfg.starter;
+        output.textContent = "点击“运行”在本机编译并执行";
+        output.classList.remove("err");
+        status.textContent = "未运行";
+        status.className = "sim-status";
+      });
+
+      runBtn.addEventListener("click", async () => {
+        if (!NATIVE) {
+          status.textContent = "需要 Windows 桌面版";
+          status.className = "sim-status bad";
+          return;
+        }
+        runBtn.disabled = true;
+        status.textContent = "编译运行中…";
+        status.className = "sim-status";
+        output.textContent = "";
+        output.classList.remove("err");
+        try {
+          const res = await runNativeC(editor.value, stdin.value);
+          if (!res.ok) {
+            output.textContent = res.error || "编译失败";
+            output.classList.add("err");
+            status.textContent = "编译失败";
+            status.className = "sim-status bad";
+            return;
+          }
+          output.textContent = res.output || "(程序没有输出)";
+          const actual = (res.output || "").replace(/\s+/g, "");
+          const expected = cfg.expected.replace(/\s+/g, "");
+          const matched = actual.includes(expected);
+          status.textContent = matched ? "✅ 输出符合预期" : "⚠ 输出与预期不同，请检查代码";
+          status.className = "sim-status " + (matched ? "ok" : "bad");
+        } catch (e) {
+          output.textContent = e.message || "运行失败";
+          output.classList.add("err");
+          status.textContent = "运行失败";
+          status.className = "sim-status bad";
+        } finally {
+          runBtn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function bindFlowSim() {
+    const flow = document.querySelector("[data-flow]");
+    if (!flow) return;
+    const list = flow.querySelector("[data-flow-list]");
+    let dragEl = null;
+
+    list.querySelectorAll(".flow-item").forEach(li => {
+      li.addEventListener("dragstart", () => {
+        dragEl = li;
+        li.style.opacity = "0.45";
+      });
+      li.addEventListener("dragend", () => {
+        li.style.opacity = "";
+        dragEl = null;
+      });
+      li.querySelectorAll("[data-move]").forEach(btn => btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const dir = btn.dataset.move;
+        if (dir === "up" && li.previousElementSibling) list.insertBefore(li, li.previousElementSibling);
+        if (dir === "down" && li.nextElementSibling) list.insertBefore(li.nextElementSibling, li);
+      }));
+    });
+
+    list.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (!dragEl) return;
+      const after = [...list.querySelectorAll(".flow-item:not([style*='0.45'])")].find(el => {
+        const box = el.getBoundingClientRect();
+        return e.clientY < box.top + box.height / 2;
+      });
+      if (after) list.insertBefore(dragEl, after);
+      else list.appendChild(dragEl);
+    });
+
+    flow.querySelector("[data-flow-check]").addEventListener("click", () => {
+      const order = [...list.querySelectorAll(".flow-item")].map(li => li.dataset.key);
+      const correctOrder = ["start", "input", "decision", "end"];
+      const yes = flow.querySelector("[data-flow-yes]").value;
+      const no = flow.querySelector("[data-flow-no]").value;
+      const result = flow.querySelector("[data-flow-result]");
+      const orderOk = order.every((k, i) => k === correctOrder[i]);
+      const branchOk = yes === "even" && no === "odd";
+      result.textContent = orderOk && branchOk
+        ? "✅ 正确：开始 → 输入 x → 判断 → 结束；是→偶数，否→奇数"
+        : (!orderOk ? "❌ 顺序不对，应为：开始 → 输入 x → 判断 → 结束" : "❌ 分支不对：是 → 输出“偶数”，否 → 输出“奇数”");
+      result.className = "sim-status " + (orderOk && branchOk ? "ok" : "bad");
+    });
+
+    flow.querySelector("[data-flow-reset]").addEventListener("click", () => {
+      renderMain();
+      toast("已重新打乱步骤");
+    });
+  }
+
+  function bindDesignSim() {
+    const box = document.querySelector("[data-design]");
+    if (!box) return;
+    const keywords = {
+      d1: ["水电报修", "卫生检查"],
+      d2: ["值班人员", "楼号", "单元号", "楼层", "宿舍号", "备注", "录入人员", "日期"],
+      d3: ["汇总时间", "班级", "姓名", "日期", "贵重物品名称", "当前页数", "总页数", "项数"],
+      d4: ["系部ID", "系部名称", "命令", "页数", "当前页数", "项数"]
+    };
+    const answers = {
+      d1: "实现水电报修、卫生检查管理功能。",
+      d2: "值班人员、楼号、单元号、楼层、宿舍号、备注、录入人员、日期。",
+      d3: "汇总时间、班级、姓名、日期、贵重物品名称、当前页数、总页数、项数。",
+      d4: "系部 ID、系部名称、命令、页数、当前页数、项数。"
+    };
+
+    box.querySelector("[data-design-check]").addEventListener("click", () => {
+      let allOk = true;
+      Object.keys(keywords).forEach(key => {
+        const input = box.querySelector('[data-design-input="' + key + '"]');
+        const fb = box.querySelector('[data-design-fb="' + key + '"]');
+        const text = (input.value || "").replace(/\s+/g, "").toLowerCase();
+        const missing = keywords[key].filter(k => !text.includes(k.replace(/\s+/g, "").toLowerCase()));
+        if (missing.length === 0) {
+          fb.textContent = "✓ 通过";
+          fb.className = "design-feedback ok";
+        } else {
+          allOk = false;
+          fb.textContent = "还缺少：" + missing.join("、");
+          fb.className = "design-feedback bad";
+        }
+      });
+      const result = box.querySelector("[data-design-result]");
+      result.textContent = allOk ? "✅ 全部通过" : "请根据提示补充缺少的项目";
+      result.className = "sim-status " + (allOk ? "ok" : "bad");
+    });
+
+    box.querySelector("[data-design-answer]").addEventListener("click", () => {
+      const answerBox = box.querySelector("[data-design-answer-box]");
+      answerBox.hidden = !answerBox.hidden;
+      if (!answerBox.hidden) {
+        answerBox.textContent = Object.keys(answers).map(k => answers[k]).join("\n");
+      }
+    });
+  }
+
+  /* ---------------- 模拟桌面安装 ---------------- */
+  let installOverlay = null;
+
+  function openInstallSim() {
+    if (installOverlay) return;
+    const s = {
+      step: 0,
+      accept: false,
+      shortcut: false,
+      html: false,
+      lang: "Plain Text",
+      code: HTML_TEMPLATE,
+      fileName: "hello.html",
+      tip: "双击桌面上的 setup.exe 开始安装"
+    };
+
+    const overlay = document.createElement("div");
+    overlay.className = "sim-overlay";
+    overlay.id = "simOverlay";
+    document.body.appendChild(overlay);
+    installOverlay = overlay;
+    document.body.style.overflow = "hidden";
+
+    const close = () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      overlay.remove();
+      installOverlay = null;
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    document.addEventListener("keydown", onKey);
+
+    const render = () => {
+      const tasks = [
+        { text: "双击安装包", done: s.step >= 1 },
+        { text: "完成安装向导", done: s.shortcut },
+        { text: "打开编辑器", done: s.step >= 7 },
+        { text: "语言改为 HTML", done: s.lang === "HTML" },
+        { text: "输入 hello world", done: /hello\s*world/i.test(s.code) },
+        { text: "保存为 hello.html", done: s.html },
+        { text: "浏览器查看效果", done: s.step >= 10 }
+      ];
+      const current = tasks.findIndex(t => !t.done);
+      const checklist = tasks.map((t, i) =>
+        '<li class="' + (t.done ? "done" : (i === current ? "cur" : "")) + '">' + esc(t.text) + '</li>'
+      ).join("");
+
+      let icons =
+        '<button class="sim-icon" data-sim-icon="installer"><span class="glyph">⚙️</span><span>sublime_text_...setup.exe</span></button>' +
+        '<button class="sim-icon" data-sim-icon="pc"><span class="glyph">🖥️</span><span>此电脑</span></button>';
+      if (s.shortcut) icons += '<button class="sim-icon" data-sim-icon="shortcut"><span class="glyph">📝</span><span>Sublime Text</span></button>';
+      if (s.html) icons += '<button class="sim-icon" data-sim-icon="html"><span class="glyph">🌐</span><span>hello.html</span></button>';
+
+      overlay.innerHTML =
+        '<div class="sim-desk">' +
+          '<div class="sim-icons">' + icons + '</div>' +
+          '<div class="sim-steps"><h4>安装 &amp; Hello World</h4><ul>' + checklist + '</ul></div>' +
+          simWindowHtml(s) +
+          '<div class="sim-tip">' + esc(s.tip) + '</div>' +
+          '<button class="sim-close" data-sim-close>退出模拟</button>' +
+        '</div>' +
+        '<div class="sim-taskbar">🖥 模拟桌面 · 双击图标操作，按右侧清单完成</div>';
+
+      if (s.step === 4) {
+        setTimeout(() => {
+          const bar = overlay.querySelector("#simBar");
+          if (bar) bar.style.width = "100%";
+        }, 60);
+      }
+    };
+
+    const go = (step) => { s.step = step; render(); };
+
+    overlay.addEventListener("click", (e) => {
+      const closeBtn = e.target.closest("[data-sim-close]");
+      if (closeBtn) { close(); return; }
+
+      const icon = e.target.closest("[data-sim-icon]");
+      if (icon) {
+        const name = icon.dataset.simIcon;
+        if (name === "installer" && s.step === 0) { s.tip = "点击 Next 继续安装"; go(1); }
+        else if (name === "shortcut" && s.step === 6) { s.tip = "把右下角语言改成 HTML，然后在 body 里输入 hello world"; go(7); }
+        else if (name === "html" && s.step === 9) { s.tip = "双击 hello.html 查看网页效果"; go(10); }
+        else if (name === "pc") { s.tip = "此电脑里没有安装包，双击桌面上的 setup.exe"; render(); }
+        return;
+      }
+
+      const next = e.target.closest("[data-sim-next]");
+      if (next) {
+        const target = +next.dataset.simNext;
+        if (target === 3 && !s.accept) { s.tip = "请先勾选“我接受许可协议”"; render(); return; }
+        if (target === 4) {
+          s.tip = "正在安装，请稍候…";
+          go(4);
+          setTimeout(() => { if (installOverlay === overlay) { s.tip = "安装完成，点击 Finish"; go(5); } }, 1100);
+          return;
+        }
+        if (target === 6) {
+          s.shortcut = true;
+          s.tip = "安装完成！双击桌面上的 Sublime Text 快捷方式";
+          go(6);
+          return;
+        }
+        s.tip = target === 2 ? "点击 Next 继续" : "点击 Install 开始安装";
+        go(target);
+        return;
+      }
+
+      const fileBtn = e.target.closest("[data-sim-file]");
+      if (fileBtn && s.step === 7) {
+        if (s.lang !== "HTML") { s.tip = "请先把右下角语言从 Plain Text 改成 HTML"; render(); return; }
+        if (!/<body[\s\S]*hello\s*world[\s\S]*<\/body>/i.test(s.code)) { s.tip = "在 <body> 和 </body> 之间输入 hello world"; render(); return; }
+        s.tip = "选择保存位置为桌面，文件名用 hello.html";
+        go(8);
+        return;
+      }
+
+      const langBtn = e.target.closest("[data-sim-lang]");
+      if (langBtn) {
+        s.lang = s.lang === "HTML" ? "Plain Text" : "HTML";
+        s.tip = s.lang === "HTML" ? "语言已切换为 HTML" : "语言已切回 Plain Text";
+        render();
+        return;
+      }
+
+      const saveBtn = e.target.closest("[data-sim-save]");
+      if (saveBtn && s.step === 8) {
+        if (!/\.html?$/i.test(s.fileName.trim())) { s.tip = "文件名需要以 .html 结尾"; render(); return; }
+        if (!/<body[\s\S]*hello\s*world[\s\S]*<\/body>/i.test(s.code)) { s.tip = "文件里还没有 hello world"; render(); return; }
+        s.html = true;
+        s.tip = "已保存到桌面，双击 hello.html 查看效果";
+        go(9);
+        return;
+      }
+    });
+
+    overlay.addEventListener("input", (e) => {
+      if (e.target.id === "simCode") s.code = e.target.value;
+      if (e.target.id === "simFileName") s.fileName = e.target.value;
+    });
+    overlay.addEventListener("change", (e) => {
+      if (e.target.id === "simAccept") s.accept = e.target.checked;
+    });
+
+    render();
+  }
+
+  function simWindowHtml(s) {
+    if (s.step === 0 || s.step === 6 || s.step === 9) return "";
+    if (s.step === 1) {
+      return '<div class="sim-win"><div class="sim-win-head">Sublime Text 3 安装程序</div><div class="sim-win-body">' +
+        '<h3>欢迎使用 Sublime Text 3 安装向导</h3><p>此向导将引导你完成 Sublime Text 3 的安装。</p>' +
+        '<div class="sim-wactions"><button class="sim-btn" data-sim-close>取消</button>' +
+        '<button class="sim-btn primary" data-sim-next="2">Next →</button></div></div></div>';
+    }
+    if (s.step === 2) {
+      return '<div class="sim-win"><div class="sim-win-head">许可协议</div><div class="sim-win-body">' +
+        '<h3>许可协议</h3><p>请阅读并接受许可协议中的条款。</p>' +
+        '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="simAccept"' + (s.accept ? " checked" : "") + '> 我接受许可协议中的条款</label>' +
+        '<div class="sim-wactions"><button class="sim-btn" data-sim-next="1">Back</button>' +
+        '<button class="sim-btn primary" data-sim-next="3">Next →</button></div></div></div>';
+    }
+    if (s.step === 3) {
+      return '<div class="sim-win"><div class="sim-win-head">选择安装位置</div><div class="sim-win-body">' +
+        '<h3>选择安装位置</h3><p>目标文件夹：</p>' +
+        '<input value="C:\\Program Files\\Sublime Text 3" readonly style="width:100%;padding:8px;border:1px solid #c9d4e8;border-radius:6px;background:#fff;color:#333">' +
+        '<div class="sim-wactions"><button class="sim-btn" data-sim-next="2">Back</button>' +
+        '<button class="sim-btn primary" data-sim-next="4">Install</button></div></div></div>';
+    }
+    if (s.step === 4) {
+      return '<div class="sim-win"><div class="sim-win-head">正在安装</div><div class="sim-win-body">' +
+        '<h3>正在安装 Sublime Text 3…</h3><div class="sim-progress"><i id="simBar"></i></div>' +
+        '<p style="margin-top:10px">正在复制文件，请稍候。</p></div></div>';
+    }
+    if (s.step === 5) {
+      return '<div class="sim-win"><div class="sim-win-head">安装完成</div><div class="sim-win-body">' +
+        '<h3>安装完成</h3><p>Sublime Text 3 已成功安装到你的电脑。</p>' +
+        '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" checked disabled> 创建桌面快捷方式</label>' +
+        '<div class="sim-wactions"><button class="sim-btn" data-sim-next="3">Back</button>' +
+        '<button class="sim-btn primary" data-sim-next="6">Finish</button></div></div></div>';
+    }
+    if (s.step === 7) {
+      return '<div class="sim-win dark"><div class="sim-win-head">Sublime Text — 未命名</div><div class="sim-win-body">' +
+        '<div class="sim-editor-bar"><button class="sim-btn" data-sim-file>File</button>' +
+        '<span style="font-size:11px;color:#888">Edit · Selection · View</span>' +
+        '<button class="lang" data-sim-lang>' + esc(s.lang) + '</button></div>' +
+        '<textarea class="sim-editor" id="simCode" spellcheck="false">' + esc(s.code) + '</textarea>' +
+        '<p style="margin:8px 0 0;font-size:11.5px;color:#888">提示：把语言改成 HTML，在 &lt;body&gt; 中输入 hello world，然后点 File 保存。</p>' +
+        '</div></div>';
+    }
+    if (s.step === 8) {
+      return '<div class="sim-win"><div class="sim-win-head">另存为</div><div class="sim-win-body">' +
+        '<h3>另存为</h3><p>保存位置：桌面</p>' +
+        '<label style="font-size:12.5px">文件名：<input id="simFileName" value="' + esc(s.fileName) + '" style="width:60%;padding:7px;border:1px solid #c9d4e8;border-radius:6px;margin-left:6px"></label>' +
+        '<p style="font-size:11.5px;color:#666;margin-top:6px">扩展名使用 .html</p>' +
+        '<div class="sim-wactions"><button class="sim-btn" data-sim-next="7">取消</button>' +
+        '<button class="sim-btn primary" data-sim-save>保存</button></div></div></div>';
+    }
+    if (s.step === 10) {
+      return '<div class="sim-win"><div class="sim-win-head">Hello World - Microsoft Edge</div><div class="sim-win-body">' +
+        '<iframe class="sim-preview" sandbox="" srcdoc="' + esc(s.code) + '"></iframe>' +
+        '<div class="sim-wactions"><button class="sim-btn primary" data-sim-close>完成</button></div></div></div>';
+    }
+    return "";
   }
 
   /* ---------------- nav ---------------- */
