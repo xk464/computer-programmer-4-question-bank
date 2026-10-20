@@ -240,9 +240,10 @@
 
   function installerHtml() {
     var p = product();
-    var stepIndex = {
-      welcome: 1, license: 2, dest: 3, startmenu: 4, tasks: 5, ready: 6, installing: 7, finish: 8
-    }[s.stage] || 1;
+    var stepOrder = s.variant === "sublime"
+      ? ["welcome", "license", "dest", "startmenu", "ready", "installing", "finish"]
+      : ["license", "dest", "startmenu", "tasks", "ready", "installing", "finish"];
+    var stepIndex = stepOrder.indexOf(s.stage) + 1;
 
     var body = "";
     if (s.stage === "welcome") {
