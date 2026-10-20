@@ -18,9 +18,14 @@ src = src.replace("本地判分 · 完全离线 · 数据仅存本机", "桌面�
 
 web = os.path.join(ROOT, "desktop", "web")
 os.makedirs(os.path.join(web, "assets"), exist_ok=True)
+idx = src.rfind("</body>")
+if idx < 0:
+    raise SystemExit("index.html 缺少 </body>")
+src = src[:idx] + '<script src="sim-install.js"></script>\n' + src[idx:]
 with open(os.path.join(web, "index.html"), "w", encoding="utf-8", newline="\n") as f:
     f.write(src)
 shutil.copyfile(os.path.join(ROOT, "assets", "bank.js"), os.path.join(web, "assets", "bank.js"))
 shutil.copyfile(os.path.join(ROOT, "assets", "favicon.png"), os.path.join(web, "assets", "favicon.png"))
+shutil.copyfile(os.path.join(ROOT, "desktop", "sim-install.js"), os.path.join(web, "sim-install.js"))
 shutil.copyfile(os.path.join(ROOT, "favicon.ico"), os.path.join(ROOT, "desktop", "app.ico"))
 print("desktop web:", len(src), "chars")

@@ -27,6 +27,7 @@
     <EmbeddedResource Include="web\index.html" LogicalName="web/index.html" />
     <EmbeddedResource Include="web\assets\bank.js" LogicalName="web/assets/bank.js" />
     <EmbeddedResource Include="web\assets\favicon.png" LogicalName="web/assets/favicon.png" />
+    <EmbeddedResource Include="web\sim-install.js" LogicalName="web/sim-install.js" />
     <EmbeddedResource Include="app.ico" LogicalName="app.ico" />
     <EmbeddedResource Include="tcc.zip" LogicalName="tcc.zip" />
     <EmbeddedResource Include="tcc-COPYING.txt" LogicalName="tcc-COPYING.txt" />

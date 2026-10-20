@@ -11,25 +11,26 @@
     {
      "name": "方案一：Sublime Text 3",
      "steps": [
-      "双击压缩包“SublimeText”解压。",
-      "双击“sublime_text_build_4152_x64_setup.exe”，依次点击 next → install → finish。",
-      "在开始菜单搜索到 sublime text，右键点击“打开文件所在位置”，选中 sublime text 右键选择“发送到 → 桌面快捷方式”生成快捷方式。",
-      "双击快捷方式打开软件，在面板右下角点击 Plain Text，将其更改为 HTML。",
-      "在第一行输入 html，按 Tab 键，输出得到 HTML 框架。",
-      "在 <body> 之间添加语句“hello world”。",
-      "在菜单栏依次点击 File → Save As，将文件位置修改为桌面，自定义文件名，然后在桌面双击自己创建的文件，网页显示“hello world”表示题目完成。"
+      "双击压缩包“SublimeText”解压（考试资源包内已提供安装程序）。",
+      "双击“sublime_text_build_4152_x64_setup.exe”进入安装向导：Welcome → Next；License Agreement 选择“I accept the terms in the License Agreement” → Next；Select Destination Location → Next；Select Start Menu Folder → Install；等待 Installing 完成 → Finish。",
+      "Sublime 安装器不会自动创建桌面快捷方式：在开始菜单搜索“Sublime Text”，右键 → 打开文件所在位置，再右键“sublime_text.exe” → 发送到 → 桌面快捷方式。",
+      "双击桌面快捷方式打开软件，在右下角点击 Plain Text，将其更改为 HTML。",
+      "在第一行输入 html，按 Tab 键，生成包含 <!DOCTYPE html>、<html>、<head>、<body> 的 HTML5 框架。",
+      "在 <body> 与 </body> 之间输入 hello world。",
+      "点击 File → Save As，保存位置选择桌面，文件名使用 .html（如 hello.html）。",
+      "在桌面双击 hello.html，浏览器显示 hello world 即完成。"
      ],
      "code": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title>Hello World</title>\n</head>\n<body>\n  hello world\n</body>\n</html>"
     },
     {
      "name": "方案二：Visual Studio Code",
      "steps": [
-      "双击安装包“VSCodeUserSetup-x64-1.94.2”。",
-      "打开双击“VSCodeUserSetup-x64-1.94.2”，依次点击同意协议后点下一步 → 下一步 → 下一步 → 勾选创建桌面快捷方式后点下一步 → 点击安装（等待）→ 点击完成。",
-      "在软件界面，点击左上角 File → New Text File，在面板右下角点击 Plain Text，将其更改为 HTML。",
-      "在文本编辑区输入：<HTML> <BODY><p>hello world!</p></BODY></HTML>",
-      "按 F5 启动运行调试，将文件保存在桌面上。",
-      "选择运行到浏览器，任选一个浏览器，网页出现“Hello World”则表示页面被正常显示。"
+      "双击安装包“VSCodeUserSetup-x64-1.94.2.exe”。",
+      "安装向导：License Agreement 选择“I accept the agreement” → Next；Select Destination Location → Next；Select Start Menu Folder → Next；Select Additional Tasks 勾选“Create a desktop icon”（考试要求桌面快捷方式） → Next；Ready to Install → Install；等待 Installing 完成 → Finish。",
+      "双击桌面上的 Visual Studio Code 图标打开软件，点击 File → New Text File 新建文件。",
+      "在右下角点击 Plain Text，将其更改为 HTML。",
+      "输入考试给出的代码：<HTML> <BODY><p>hello world!</p></BODY></HTML>（HTML5 页面可补 <!DOCTYPE html>）。",
+      "按 F5 启动运行，将文件保存到桌面；选择运行到浏览器（Edge/Chrome），网页出现“Hello World”即完成。"
      ],
      "code": "<HTML> <BODY><p>hello world!</p></BODY></HTML>"
     }

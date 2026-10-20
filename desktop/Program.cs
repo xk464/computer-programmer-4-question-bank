@@ -338,6 +338,7 @@ public sealed class MainForm : Form
             ("web/index.html", "index.html"),
             ("web/assets/bank.js", Path.Combine("assets", "bank.js")),
             ("web/assets/favicon.png", Path.Combine("assets", "favicon.png")),
+            ("web/sim-install.js", "sim-install.js"),
         };
 
         foreach (var (resource, relative) in files)
