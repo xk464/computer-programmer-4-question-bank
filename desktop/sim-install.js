@@ -85,7 +85,13 @@
     ".ts-gallery{display:grid;gap:12px}",
     ".ts-gallery figure{margin:0;border:1px solid #c9d4e8;border-radius:8px;overflow:hidden;background:#fff}",
     ".ts-gallery img{display:block;width:100%;height:auto}",
-    ".ts-gallery figcaption{padding:7px 10px;font-size:11.5px;color:#54708f;background:#f4f7fc;border-top:1px solid #dbe4f2}"
+    ".ts-gallery figcaption{padding:7px 10px;font-size:11.5px;color:#54708f;background:#f4f7fc;border-top:1px solid #dbe4f2}",
+    ".ts-sandbox-note{background:#0f2a24;border:1px solid #2c6b58;color:#9fe3c8;border-radius:8px;padding:8px 10px;font-size:11.5px;line-height:1.55}",
+    ".ts-table{width:100%;border-collapse:collapse;font-size:11.5px;margin:4px 0 10px}",
+    ".ts-table th{text-align:left;background:#e8eef8;color:#42536e;padding:6px 8px;border:1px solid #d6deeb;font-weight:600}",
+    ".ts-table td{padding:6px 8px;border:1px solid #e1e8f3;color:#2b3a55;vertical-align:top}",
+    ".ts-table .path{font-family:Consolas,monospace;font-size:11px;color:#344a6b;word-break:break-all}",
+    ".ts-install-log{background:#0d1b2e;border:1px solid #2b4468;border-radius:8px;padding:8px 10px;font-family:Consolas,monospace;font-size:11.5px;color:#9fd6b8;line-height:1.7;min-height:52px;margin-top:8px}"
   ].join("\n");
 
   function injectCss() {
@@ -112,7 +118,7 @@
     vscode: {
       name: "Visual Studio Code",
       setup: "VSCodeUserSetup-x64-1.94.2.exe",
-      path: "C:\\Users\\%USERNAME%\\AppData\\Local\\Programs\\Microsoft VS Code",
+      path: "C:\\Users\\考生\\AppData\\Local\\Programs\\Microsoft VS Code",
       menu: "Visual Studio Code"
     }
   };
@@ -130,6 +136,88 @@
       { src: "sim-assets/vscode-ready.png", caption: "准备安装（附加任务汇总）" }
     ]
   };
+
+  var SANDBOX_USER = "C:\\Users\\考生";
+  var SANDBOX_DESKTOP = SANDBOX_USER + "\\Desktop";
+  var SANDBOX_START = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs";
+
+  function defaultSandbox() {
+    return { files: [], shortcuts: [], registry: [], installedApp: false };
+  }
+
+  function addSandboxFile(path, size, kind, content) {
+    if (!s || !s.sandbox) return;
+    var hit = s.sandbox.files.find(function (f) { return f.path === path; });
+    if (hit) { hit.size = size; hit.kind = kind; hit.content = content || hit.content; return; }
+    s.sandbox.files.push({ path: path, size: size, kind: kind, content: content || "" });
+  }
+
+  function addSandboxShortcut(name, target, place) {
+    if (!s || !s.sandbox) return;
+    var dir = place === "desktop" ? SANDBOX_DESKTOP : SANDBOX_START;
+    var path = dir + "\\" + name + ".lnk";
+    if (s.sandbox.shortcuts.some(function (x) { return x.path === path; })) return;
+    s.sandbox.shortcuts.push({ name: name, target: target, place: place, path: path });
+  }
+
+  function addSandboxRegistry(key, value) {
+    if (!s || !s.sandbox) return;
+    if (s.sandbox.registry.some(function (x) { return x.key === key; })) return;
+    s.sandbox.registry.push({ key: key, value: value });
+  }
+
+  function installAppIntoSandbox() {
+    if (!s || !s.sandbox || s.sandbox.installedApp) return;
+    if (s.variant === "sublime") {
+      addSandboxFile("C:\\Program Files\\Sublime Text\\sublime_text.exe", "14.2 MB", "应用程序");
+      addSandboxFile("C:\\Program Files\\Sublime Text\\sublime_plugin.py", "186 KB", "Python 脚本");
+      addSandboxFile("C:\\Program Files\\Sublime Text\\Packages\\Default.sublime-package", "1.6 MB", "资源包");
+      addSandboxFile("C:\\Program Files\\Sublime Text\\unins000.exe", "1.1 MB", "卸载程序");
+      addSandboxShortcut("Sublime Text", "C:\\Program Files\\Sublime Text\\sublime_text.exe", "start");
+      addSandboxRegistry("HKLM\\SOFTWARE\\Sublime Text", "InstallDir = C:\\Program Files\\Sublime Text");
+    } else {
+      var dir = "C:\\Users\\考生\\AppData\\Local\\Programs\\Microsoft VS Code";
+      addSandboxFile(dir + "\\Code.exe", "128 MB", "应用程序");
+      addSandboxFile(dir + "\\resources\\app\\out\\main.js", "2.4 MB", "JavaScript");
+      addSandboxFile(dir + "\\Uninstall.exe", "1.3 MB", "卸载程序");
+      addSandboxShortcut("Visual Studio Code", dir + "\\Code.exe", "start");
+      if (s.tasks.desktop) addSandboxShortcut("Visual Studio Code", dir + "\\Code.exe", "desktop");
+      addSandboxRegistry("HKCU\\Software\\Microsoft\\VS Code", "InstallLocation = " + dir);
+    }
+    s.sandbox.installedApp = true;
+  }
+
+  function resetSandbox() {
+    if (!s) return;
+    if (s.installTimer) { clearInterval(s.installTimer); s.installTimer = null; }
+    var variant = s.variant;
+    s.sandbox = defaultSandbox();
+    s.stage = "desktop";
+    s.installerStarted = false;
+    s.accept = false;
+    s.destChosen = false;
+    s.startMenuChosen = false;
+    s.tasks = { desktop: false, file: false, dir: false, register: false, path: false };
+    s.installed = false;
+    s.shortcut = false;
+    s.shortcutStep = 0;
+    s.lang = "Plain Text";
+    s.code = "";
+    s.newFile = false;
+    s.saved = false;
+    s.browser = false;
+    s.editorOpened = false;
+    s.fileMenu = false;
+    s.langMenu = false;
+    s.fileName = "hello.html";
+    s.explorerOpen = false;
+    s.galleryOpen = false;
+    s.installLog = [];
+    s.installPct = 0;
+    s.variant = variant;
+    s.tip = "沙盒已还原：虚拟文件、快捷方式和注册表已全部清空";
+    render();
+  }
 
   function open(variant) {
     if (overlay) return;
@@ -155,7 +243,12 @@
       langMenu: false,
       fileName: "hello.html",
       tip: "",
-      galleryOpen: false
+      galleryOpen: false,
+      sandbox: defaultSandbox(),
+      explorerOpen: false,
+      installLog: [],
+      installPct: 0,
+      installTimer: null
     };    s.tip = s.variant === "sublime"
       ? "双击桌面上的 Sublime Text 安装包开始"
       : "双击桌面上的 VS Code 安装包开始";
@@ -173,6 +266,7 @@
 
   function close() {
     if (!overlay) return;
+    if (s && s.installTimer) { clearInterval(s.installTimer); s.installTimer = null; }
     overlay.remove();
     overlay = null;
     s = null;
@@ -206,9 +300,11 @@
       '<aside class="ts-side">' +
         '<h4>' + esc(p.name) + ' 安装全流程</h4>' +
         '<div class="sub">依据实操要求与安装器实际向导页</div>' +
+        '<div class="ts-sandbox-note">🧪 应用内虚拟沙盒<br>文件 / 快捷方式 / 注册表均不写入真实电脑</div>' +
         '<ul class="ts-steps">' + steps + '</ul>' +
-        '<button class="close" data-act="gallery" style="margin-top:auto">查看真实安装界面</button>' +
-        '<button class="close" data-close style="margin-top:0">退出模拟</button>' +
+        '<button class="close" data-act="explorer" style="margin-top:auto">沙盒文件</button>' +
+        '<button class="close" data-act="gallery" style="margin-top:0">查看真实安装界面</button>' +
+        '<button class="close" data-close style="margin-top:0">退出并还原沙盒</button>' +
       '</aside>';
   }
 
@@ -244,6 +340,7 @@
 
   function windowHtml() {
     if (s.galleryOpen) return galleryHtml();
+    if (s.explorerOpen) return explorerHtml();
     if (s.stage === "desktop") return "";
     if (["welcome", "license", "dest", "startmenu", "tasks", "ready", "installing", "finish"].indexOf(s.stage) >= 0) return installerHtml();
     if (s.stage === "shortcut") return shortcutHtml();
@@ -304,12 +401,19 @@
         actions([btn("← 上一步", "back", "ghost"), btn("安装", "install", "primary")]);
     } else if (s.stage === "installing") {
       body = '<h3>正在安装…</h3>' +
-        '<p>正在复制文件并创建快捷方式，请稍候。</p>' +
-        '<div class="ts-progress"><i id="ts-progress"></i></div>' +
-        '<p style="font-size:11.5px;color:#7a879c">安装过程中请不要关闭窗口。</p>';
+        '<p>正在向沙盒虚拟 C 盘复制文件并创建开始菜单快捷方式。</p>' +
+        '<div class="ts-progress"><i style="width:' + (s.installPct || 0) + '%"></i></div>' +
+        '<div class="ts-install-log">' + (s.installLog || []).map(function (x) {
+          return '<div>✓ ' + esc(x) + '</div>';
+        }).join("") + '</div>' +
+        '<p style="font-size:11.5px;color:#7a879c">安装位置：' + esc(p.path) + '（沙盒虚拟路径，不会写入真实 C 盘）</p>';
     } else if (s.stage === "finish") {
       body = '<h3>完成 ' + esc(p.name) + ' 安装向导</h3>' +
-        '<p>' + esc(p.name) + ' 已安装到你的电脑。</p>' +
+        '<p>' + esc(p.name) + ' 已安装到沙盒的虚拟 C 盘。</p>' +
+        '<div class="ts-shortcut-note">已创建：' + (s.variant === "sublime"
+          ? "C:\\Program Files\\Sublime Text\\sublime_text.exe<br>开始菜单：Sublime Text"
+          : "C:\\Users\\考生\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe<br>开始菜单：Visual Studio Code") +
+        '<br>这些内容只存在于本次模拟沙盒，退出后自动还原。</div>' +
         '<label class="ts-check"><input type="checkbox" checked disabled> 运行 ' + esc(p.name) + '</label>' +
         actions([btn("完成", "finish", "primary")]);
     }
@@ -415,8 +519,37 @@
   function browserHtml() {
     return '<div class="ts-win"><div class="ts-head">' + esc(s.fileName) + ' - Microsoft Edge</div><div class="ts-body">' +
       '<iframe class="ts-iframe" sandbox="" srcdoc="' + esc(s.code) + '"></iframe>' +
-      '<div class="ts-shortcut-note">如果页面显示 Hello World，本题完成。文件已保存在桌面。</div>' +
+      '<div class="ts-shortcut-note">如果页面显示 Hello World，本题完成。文件已保存在沙盒桌面。</div>' +
       actions([btn("完成", "finish-close", "primary")]) +
+      '</div></div>';
+  }
+
+  function explorerHtml() {
+    var files = (s.sandbox && s.sandbox.files) || [];
+    var shortcuts = (s.sandbox && s.sandbox.shortcuts) || [];
+    var reg = (s.sandbox && s.sandbox.registry) || [];
+
+    var fileRows = files.length ? files.map(function (f) {
+      return '<tr><td class="path">' + esc(f.path) + '</td><td>' + esc(f.size) + '</td><td>' + esc(f.kind) + '</td></tr>';
+    }).join("") : '<tr><td colspan="3" style="color:#7a879c">尚未安装任何程序，先完成安装向导</td></tr>';
+
+    var scRows = shortcuts.length ? shortcuts.map(function (x) {
+      return '<tr><td>' + (x.place === "desktop" ? "桌面" : "开始菜单") + '</td><td>' + esc(x.name) + '.lnk</td><td class="path">' + esc(x.target) + '</td></tr>';
+    }).join("") : '<tr><td colspan="3" style="color:#7a879c">暂无快捷方式</td></tr>';
+
+    var regRows = reg.length ? reg.map(function (x) {
+      return '<tr><td class="path">' + esc(x.key) + '</td><td class="path">' + esc(x.value) + '</td></tr>';
+    }).join("") : '<tr><td colspan="2" style="color:#7a879c">暂无注册表项</td></tr>';
+
+    return '<div class="ts-win"><div class="ts-head">🧪 沙盒文件管理器 · 虚拟 C 盘</div><div class="ts-body">' +
+      '<p>这里的文件、快捷方式和注册表只存在于本次模拟沙盒，退出或点“还原沙盒”后全部清空，不会改动真实电脑。</p>' +
+      '<h3>已安装文件</h3>' +
+      '<table class="ts-table"><thead><tr><th>路径</th><th>大小</th><th>类型</th></tr></thead><tbody>' + fileRows + '</tbody></table>' +
+      '<h3>快捷方式</h3>' +
+      '<table class="ts-table"><thead><tr><th>位置</th><th>名称</th><th>目标</th></tr></thead><tbody>' + scRows + '</tbody></table>' +
+      '<h3>注册表</h3>' +
+      '<table class="ts-table"><thead><tr><th>键</th><th>值</th></tr></thead><tbody>' + regRows + '</tbody></table>' +
+      actions([btn("还原沙盒", "reset-sandbox", "ghost"), btn("返回", "explorer-close", "primary")]) +
       '</div></div>';
   }
 
@@ -452,7 +585,9 @@
       } else if (name === "html" && s.stage === "desktop" && s.saved) {
         s.stage = "browser"; s.browser = true; render();
       } else if (name === "pc") {
-        setTip("此电脑里没有安装包，双击桌面上的安装程序");
+        s.explorerOpen = true;
+        s.tip = "沙盒文件管理器：这里能看到虚拟 C 盘中的安装结果";
+        render();
       }
       return;
     }
@@ -488,25 +623,68 @@
     }
     else if (a === "install") {
       if (s.stage === "startmenu") s.startMenuChosen = true;
-      s.stage = "installing"; s.tip = "正在安装，请稍候"; render();
-      setTimeout(function () {
-        if (!overlay) return;
-        s.installed = true; s.stage = "finish"; s.tip = "点击“完成”结束安装"; render();
-      }, 1300);
+      s.stage = "installing"; s.installPct = 0; s.installLog = [];
+      s.tip = "正在写入沙盒虚拟 C 盘"; render();
+      var steps = s.variant === "sublime"
+        ? [
+            "创建目录 C:\\Program Files\\Sublime Text",
+            "复制 sublime_text.exe（14.2 MB）",
+            "复制 Packages\\Default.sublime-package",
+            "创建开始菜单快捷方式 Sublime Text",
+            "写入注册表 HKLM\\SOFTWARE\\Sublime Text"
+          ]
+        : [
+            "创建目录 " + product().path,
+            "复制 Code.exe（128 MB）",
+            "复制 resources\\app\\out\\main.js",
+            "创建开始菜单快捷方式 Visual Studio Code",
+            "写入注册表 HKCU\\Software\\Microsoft\\VS Code"
+          ];
+      var i = 0;
+      if (s.installTimer) clearInterval(s.installTimer);
+      s.installTimer = setInterval(function () {
+        if (!overlay || s.stage !== "installing") {
+          if (s.installTimer) clearInterval(s.installTimer);
+          s.installTimer = null;
+          return;
+        }
+        i++;
+        s.installPct = Math.min(100, Math.round(i * 100 / steps.length));
+        if (steps[i - 1]) s.installLog.push(steps[i - 1]);
+        render();
+        if (i >= steps.length) {
+          clearInterval(s.installTimer); s.installTimer = null;
+          setTimeout(function () {
+            if (!overlay || s.stage !== "installing") return;
+            installAppIntoSandbox();
+            s.installed = true;
+            s.stage = "finish";
+            s.tip = "安装完成，文件已写入沙盒虚拟 C 盘";
+            render();
+          }, 350);
+        }
+      }, 260);
     }
     else if (a === "finish") {
+      installAppIntoSandbox();
       s.installed = true;
       if (s.variant === "sublime") {
         s.stage = "shortcut"; s.shortcutStep = 0;
         s.tip = "安装完成，但桌面还没有快捷方式，按步骤创建";
       } else {
-        s.shortcut = true; s.stage = "desktop";
-        s.tip = "安装完成，桌面已有 VS Code 图标，双击打开";
+        s.shortcut = true;
+        if (s.tasks.desktop) addSandboxShortcut("Visual Studio Code", product().path + "\\Code.exe", "desktop");
+        s.stage = "desktop";
+        s.tip = "安装完成，沙盒桌面已有 VS Code 图标，双击打开";
       }
       render();
     }
     else if (a === "shortcut-1") { s.shortcutStep = 1; s.tip = "右键 sublime_text.exe，选择“发送到 → 桌面快捷方式”"; render(); }
-    else if (a === "shortcut-2") { s.shortcut = true; s.shortcutStep = 2; s.tip = "快捷方式已创建"; render(); }
+    else if (a === "shortcut-2") {
+      s.shortcut = true; s.shortcutStep = 2;
+      addSandboxShortcut("Sublime Text", "C:\\Program Files\\Sublime Text\\sublime_text.exe", "desktop");
+      s.tip = "快捷方式已创建到沙盒桌面"; render();
+    }
     else if (a === "shortcut-done") {
       s.stage = "desktop"; s.tip = "双击桌面上的快捷方式打开编辑器"; render();
     }
@@ -527,6 +705,9 @@
     else if (a === "cancel-install") { close(); }
     else if (a === "gallery") { s.galleryOpen = true; render(); }
     else if (a === "gallery-close") { s.galleryOpen = false; render(); }
+    else if (a === "explorer") { s.explorerOpen = true; s.tip = "沙盒文件管理器"; render(); }
+    else if (a === "explorer-close") { s.explorerOpen = false; s.tip = ""; render(); }
+    else if (a === "reset-sandbox") { resetSandbox(); }
     else if (a === "back") {
       var backMap = { license: s.variant === "sublime" ? "welcome" : "license", dest: "license", startmenu: "dest", tasks: "startmenu", ready: s.variant === "vscode" ? "tasks" : "startmenu" };
       if (s.stage === "license" && s.variant === "vscode") { s.tip = "这是安装向导第一步"; render(); return; }
@@ -554,10 +735,12 @@
     var name = s.fileName.trim();
     if (!/\.html?$/i.test(name)) { s.tip = "文件名需要以 .html 结尾"; render(); return; }
     s.saved = true;
+    addSandboxFile(SANDBOX_DESKTOP + "\\" + name,
+      Math.max(1, Math.round(s.code.length / 1024)) + " KB", "HTML 文档", s.code);
     if (s.variant === "vscode") {
-      s.stage = "runpicker"; s.tip = "保存成功，选择“浏览器”运行";
+      s.stage = "runpicker"; s.tip = "保存成功，文件已写入沙盒桌面；选择“浏览器”运行";
     } else {
-      s.browser = true; s.stage = "browser"; s.tip = "保存成功，桌面已生成 HTML 文件";
+      s.browser = true; s.stage = "browser"; s.tip = "保存成功，沙盒桌面已生成 HTML 文件";
     }
     render();
   }
